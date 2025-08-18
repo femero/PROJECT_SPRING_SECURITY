@@ -1,0 +1,90 @@
+server:
+  port: 9100
+
+application:
+  security:
+    jwt:
+      #secret-key: mi clave es muy segura 123456789 ABCabc
+      secret-key: bWkgY2xhdmUgZXMgbXV5IHNlZ3VyYSAxMjM0NTY3ODkgQUJDYWJj
+      expiration: 86400000 # a day (1000 * 60 * 60 * 24)
+      refresh-token:
+        expiration: 604800000 # a week (1000 * 60 * 60 * 24 * 7)
+
+# H2 Database Configuration
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: Femero1978
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    defer-datasource-initialization: true
+
+# Configuración de Logging para aplicación JWT
+logging:
+  level:
+    # Configuración para Hibernate/JPA
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE  # Para ver los parámetros de las consultas SQL
+        stat: DEBUG  # Para estadísticas de Hibernate
+      springframework:
+        web: DEBUG
+        security: DEBUG  # Importante para debugging de autenticación JWT
+        transaction: DEBUG  # Para transacciones de base de datos
+
+    # Configuración específica para tu aplicación
+    com:
+      programandoenjava:
+        jwt: DEBUG  # Paquete específico de tu aplicación JWT
+
+    # Configuración general
+    root: INFO
+
+    # Configuración para librerías específicas
+    io:
+      jsonwebtoken: DEBUG  # Para debugging de JWT si usas jjwt
+
+    # Configuración de base de datos
+    org.springframework.jdbc.core: DEBUG  # Para ver queries SQL
+
+  # Patrón de logging mejorado
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId:-}/%X{spanId:-}] %-5level [%thread] %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId:-}/%X{spanId:-}] %-5level [%thread] %logger{36} - %msg%n"
+
+  # Configuración de archivos de log
+  file:
+    name: logs/jwt-app.log
+    max-size: 10MB
+    max-history: 30
+
+  # Configuración adicional para Spring Boot
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 30
+      total-size-cap: 1GB
+
+# Configuración adicional para el contexto de la aplicación
+management:
+  tracing:
+    sampling:
+      probability: 1.0  # Para trazabilidad completa en desarrollo
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,loggers
+
