@@ -62,6 +62,8 @@ public class SecurityConfig {
                         "/h2-console/**",
                         "/error"
                 ).permitAll()
+                // ✅ IMPORTANTE: refresh-token REQUIERE autenticación (con refresh token)
+                .requestMatchers("/api/v1/auth/refresh-token").authenticated()
                 // Endpoints que requieren solo estar autenticado
                 .requestMatchers("/api/v1/test/protected").authenticated()
                 .requestMatchers("/api/v1/users").hasAuthority("ROLE_" + Role.CUSTOMER.name()) // Added hasAuthority

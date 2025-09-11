@@ -45,9 +45,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String requestURI = request.getRequestURI();
         log.debug("Processing request: {} {}", request.getMethod(), requestURI);
 
-        // Skip JWT filter for public endpoints
-        if (shouldSkipJwtFilter(requestPath)) {
-            log.debug("Skipping JWT filter for path: {}", requestPath);
+        // Skip JWT filter for PUBLIC endpoints ONLY (not refresh-token)
+        if (shouldSkipJwtFilterCompletely(requestPath)) {
+            log.debug("Skipping JWT filter completely for public path: {}", requestPath);
             filterChain.doFilter(request, response);
             return;
         }
@@ -76,59 +76,59 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // Cargar los detalles del usuario
             final UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 
-            // CORRECCIÓN PRINCIPAL: Verificar que el token NO esté expirado NI revocado
-            final boolean isTokenValid = tokenRepository.findByToken(jwt)
-                    .map(token -> {
-                        boolean isNotExpired = !token.getIsExpired();
-                        boolean isNotRevoked = !token.getIsRevoked();
-                        log.debug("Token validation - Expired: {}, Revoked: {}", token.getIsExpired(), token.getIsRevoked());
-                        return isNotExpired && isNotRevoked;
-                    })
-                    .orElse(false); // Si no encuentra el token en BD, es inválido
+            // LÓGICA ESPECIAL PARA REFRESH TOKEN
+            if (isRefreshTokenEndpoint(requestPath)) {
+                log.debug("Processing refresh token endpoint");
 
-            log.debug("Token valid in database: {}", isTokenValid);
-
-            if (isTokenValid) {
                 final Optional<User> user = userRepository.findByEmail(userEmail);
-
                 if (user.isPresent()) {
-                    // Verificar también la validez del JWT (firma, expiración, etc.)
+                    // Para refresh token, solo verificar la validez del JWT (no la BD de tokens)
                     final boolean isJwtValid = jwtService.isTokenValid(jwt, user.get());
-                    log.debug("JWT signature and expiration valid: {}", isJwtValid);
+                    log.debug("Refresh token JWT validity: {}", isJwtValid);
 
                     if (isJwtValid) {
-                        log.debug("Authenticating user: {}", userEmail);
-
-                        // DEBUG: Verificar el rol del usuario
-                        log.debug("User details class: {}", userDetails.getClass().getName());
-                        log.debug("User authorities before auth: {}", userDetails.getAuthorities());
-
-                        if (userDetails instanceof User) {
-                            User userEntity = (User) userDetails;
-                            log.debug("User role from entity: {}", userEntity.getRole());
-                            log.debug("User authorities from getAuthorities(): {}", userEntity.getAuthorities());
-                        }
-
-                        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null,
-                                userDetails.getAuthorities()
-                        );
-                        authToken.setDetails(
-                                new WebAuthenticationDetailsSource().buildDetails(request)
-                        );
-                        SecurityContextHolder.getContext().setAuthentication(authToken);
-
-                        log.debug("User {} authenticated successfully with authorities: {}",
-                                userEmail, userDetails.getAuthorities());
+                        log.debug("Authenticating user for refresh token: {}", userEmail);
+                        authenticateUser(request, userDetails);
                     } else {
-                        log.warn("JWT token signature/expiration invalid for user: {}", userEmail);
+                        log.warn("Invalid refresh token JWT for user: {}", userEmail);
                     }
-                } else {
-                    log.warn("User not found in database: {}", userEmail);
                 }
             } else {
-                log.warn("Token is expired, revoked, or not found in database");
+                // LÓGICA NORMAL PARA ACCESS TOKENS
+                log.debug("Processing regular access token");
+
+                // Verificar que el token NO esté expirado NI revocado en BD
+                final boolean isTokenValid = tokenRepository.findByToken(jwt)
+                        .map(token -> {
+                            boolean isNotExpired = !token.getIsExpired();
+                            boolean isNotRevoked = !token.getIsRevoked();
+                            log.debug("Access token validation - Expired: {}, Revoked: {}", token.getIsExpired(), token.getIsRevoked());
+                            return isNotExpired && isNotRevoked;
+                        })
+                        .orElse(false); // Si no encuentra el token en BD, es inválido
+
+                log.debug("Access token valid in database: {}", isTokenValid);
+
+                if (isTokenValid) {
+                    final Optional<User> user = userRepository.findByEmail(userEmail);
+
+                    if (user.isPresent()) {
+                        // Verificar también la validez del JWT (firma, expiración, etc.)
+                        final boolean isJwtValid = jwtService.isTokenValid(jwt, user.get());
+                        log.debug("Access token JWT signature and expiration valid: {}", isJwtValid);
+
+                        if (isJwtValid) {
+                            log.debug("Authenticating user with access token: {}", userEmail);
+                            authenticateUser(request, userDetails);
+                        } else {
+                            log.warn("JWT token signature/expiration invalid for user: {}", userEmail);
+                        }
+                    } else {
+                        log.warn("User not found in database: {}", userEmail);
+                    }
+                } else {
+                    log.warn("Access token is expired, revoked, or not found in database");
+                }
             }
 
         } catch (Exception e) {
@@ -140,10 +140,44 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     /**
-     * Determina si el filtro JWT debe ser omitido para ciertos paths
+     * Autentica al usuario en el contexto de seguridad
      */
-    private boolean shouldSkipJwtFilter(String requestPath) {
-        return requestPath.contains("/auth") ||
+    private void authenticateUser(HttpServletRequest request, UserDetails userDetails) {
+        log.debug("User details class: {}", userDetails.getClass().getName());
+        log.debug("User authorities before auth: {}", userDetails.getAuthorities());
+
+        if (userDetails instanceof User) {
+            User userEntity = (User) userDetails;
+            log.debug("User role from entity: {}", userEntity.getRole());
+            log.debug("User authorities from getAuthorities(): {}", userEntity.getAuthorities());
+        }
+
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                userDetails,
+                null,
+                userDetails.getAuthorities()
+        );
+        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        log.debug("User {} authenticated successfully with authorities: {}",
+                  userDetails.getUsername(), userDetails.getAuthorities());
+    }
+
+    /**
+     * Verifica si es el endpoint de refresh token
+     */
+    private boolean isRefreshTokenEndpoint(String requestPath) {
+        return requestPath.contains("/auth/refresh-token");
+    }
+
+    /**
+     * Determina si el filtro JWT debe ser omitido COMPLETAMENTE para endpoints públicos
+     * (NO incluye refresh-token que necesita procesar el JWT)
+     */
+    private boolean shouldSkipJwtFilterCompletely(String requestPath) {
+        return requestPath.contains("/auth/register") ||
+                requestPath.contains("/auth/login") ||
                 requestPath.contains("/h2-console") ||
                 requestPath.startsWith("/error") ||
                 requestPath.equals("/") ||
