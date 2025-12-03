@@ -10,6 +10,46 @@ application:
       expiration: 60000 # a day (1000 * 60)
       refresh-token:
         expiration: 604800000 # a week (1000 * 60 * 60 * 24 * 7)
+      
+      # Configuración de validación JWT avanzada
+      validation:
+        header-name: Authorization
+        failed-validation-httpcode: 403
+        
+        # Configuración OpenID Connect (opcional para Azure AD / Microsoft)
+        openid-config:
+          enabled: false
+          url: https://login.microsoftonline.com/{tenant}/.well-known/openid-configuration
+        
+        # Audiencias permitidas
+        audiences:
+          - api://my-api
+          - api://my-backend
+        
+        # Claims requeridos con validación
+        required-claims:
+          # Validar roles (match: any - al menos uno debe coincidir)
+          roles:
+            match: any
+            values:
+              - ADMIN
+              - EDITOR
+
+          # Validar scopes/permisos (match: all - todos deben estar presentes)
+          scopes:
+            match: all
+            values:
+              - READ
+              - WRITE
+          
+          # Validar claim personalizado department (match: any)
+          department:
+            match: any
+            values:
+              - IT
+              - Finance
+              - Engineering
+              - Sales
 
 # H2 Database Configuration
 spring:

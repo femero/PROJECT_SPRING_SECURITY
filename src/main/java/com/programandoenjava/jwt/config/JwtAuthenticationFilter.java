@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -33,6 +35,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
     private final TokenRepository tokenRepository;
     private final UserRepository userRepository;
+
+    // Configuración de validación de claims desde application.yml
+    @Value("${application.security.jwt.validation.required-claims.roles.values:}")
+    private List<String> requiredRoles;
+
+    @Value("${application.security.jwt.validation.required-claims.roles.match:any}")
+    private String rolesMatchType;
+
+    @Value("${application.security.jwt.validation.required-claims.scopes.values:}")
+    private List<String> requiredScopes;
+
+    @Value("${application.security.jwt.validation.required-claims.scopes.match:all}")
+    private String scopesMatchType;
+
+    @Value("${application.security.jwt.validation.required-claims.department.values:}")
+    private List<String> requiredDepartments;
+
+    @Value("${application.security.jwt.validation.required-claims.department.match:any}")
+    private String departmentMatchType;
 
     @Override
     protected void doFilterInternal(
@@ -118,8 +139,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         log.debug("Access token JWT signature and expiration valid: {}", isJwtValid);
 
                         if (isJwtValid) {
-                            log.debug("Authenticating user with access token: {}", userEmail);
-                            authenticateUser(request, userDetails);
+                            // ✅ VALIDACIÓN DE CLAIMS PERSONALIZADOS
+                            if (validateRequiredClaims(jwt)) {
+                                log.debug("✅ Todos los claims requeridos son válidos");
+                                log.debug("Authenticating user with access token: {}", userEmail);
+                                authenticateUser(request, userDetails);
+                            } else {
+                                log.warn("❌ Validación de claims requeridos falló - No se autenticará al usuario");
+                                // No autenticar - Spring Security lanzará 403 si intenta acceder a recurso protegido
+                            }
                         } else {
                             log.warn("JWT token signature/expiration invalid for user: {}", userEmail);
                         }
@@ -182,5 +210,47 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 requestPath.startsWith("/error") ||
                 requestPath.equals("/") ||
                 requestPath.startsWith("/public");
+    }
+
+    /**
+     * Valida todos los claims requeridos configurados en application.yml
+     * @param jwt Token JWT
+     * @return true si todas las validaciones pasan
+     */
+    private boolean validateRequiredClaims(String jwt) {
+        try {
+            log.debug("🔍 Iniciando validación de claims requeridos");
+
+            // Validar roles si están configurados
+            if (requiredRoles != null && !requiredRoles.isEmpty()) {
+                if (!jwtService.validateRoles(jwt, requiredRoles, rolesMatchType)) {
+                    log.warn("❌ Validación de roles falló");
+                    return false;
+                }
+            }
+
+            // Validar scopes si están configurados
+            if (requiredScopes != null && !requiredScopes.isEmpty()) {
+                if (!jwtService.validateScopes(jwt, requiredScopes, scopesMatchType)) {
+                    log.warn("❌ Validación de scopes falló");
+                    return false;
+                }
+            }
+
+            // Validar department si está configurado
+            if (requiredDepartments != null && !requiredDepartments.isEmpty()) {
+                if (!jwtService.validateCustomClaim(jwt, "department", requiredDepartments, departmentMatchType)) {
+                    log.warn("❌ Validación de department falló");
+                    return false;
+                }
+            }
+
+            log.info("✅ Todas las validaciones de claims pasaron exitosamente");
+            return true;
+
+        } catch (Exception e) {
+            log.error("❌ Error al validar claims: {}", e.getMessage(), e);
+            return false;
+        }
     }
 }

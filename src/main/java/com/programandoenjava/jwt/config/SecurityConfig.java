@@ -1,14 +1,17 @@
 package com.programandoenjava.jwt.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.programandoenjava.jwt.auth.repository.Token;
 import com.programandoenjava.jwt.auth.repository.TokenRepository;
 import com.programandoenjava.jwt.util.Role;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -18,8 +21,14 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -27,6 +36,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableMethodSecurity
+@Slf4j
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
@@ -44,6 +54,11 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(builderRequestMatchers())
+                // Configurar manejo de errores de autenticación (401) y autorización (403)
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint())
+                        .accessDeniedHandler(jwtAccessDeniedHandler())
+                )
                 .logout(logout ->
                         logout.logoutUrl("/auth/logout")
                                 .addLogoutHandler(this::logout)
@@ -55,21 +70,85 @@ public class SecurityConfig {
 
     private static Customizer<AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry> builderRequestMatchers() {
         return req -> req
-                // Endpoints públicos - NO requieren autentica
+                // Endpoints públicos - NO requieren autenticación
                 .requestMatchers(
-                        "/api/v1/auth/**",
-                        "/api/v1/test/public", // Endpoint de prueba público
+                        "/api/v1/auth/register",
+                        "/api/v1/auth/login",
                         "/h2-console/**",
                         "/error"
                 ).permitAll()
-                // ✅ IMPORTANTE: refresh-token REQUIERE autenticación (con refresh token)
+
+                // Refresh token requiere autenticación (con refresh token válido)
                 .requestMatchers("/api/v1/auth/refresh-token").authenticated()
-                // Endpoints que requieren solo estar autenticado
-                .requestMatchers("/api/v1/test/protected").authenticated()
-                .requestMatchers("/api/v1/users").hasAuthority("ROLE_" + Role.CUSTOMER.name()) // Added hasAuthority
-                //.requestMatchers("/api/v1/user/**").hasAnyRole("CUSTOMER", "ADMINISTRATOR")
+
+                // Endpoints específicos por ROL
+                .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/v1/editor/**").hasAnyRole("ADMIN", "EDITOR")
+
+                // Endpoints específicos por PERMISO
+                .requestMatchers("/api/v1/read/**").hasAuthority("READ")
+                .requestMatchers("/api/v1/write/**").hasAuthority("WRITE")
+
                 // Cualquier otra petición requiere autenticación
                 .anyRequest().authenticated();
+    }
+
+    /**
+     * Maneja errores de autenticación (401 Unauthorized)
+     * Se activa cuando:
+     * - No hay token JWT en la petición
+     * - El token JWT es inválido (firma incorrecta, formato incorrecto)
+     * - El token JWT ha expirado
+     * - El token JWT ha sido revocado
+     */
+    @Bean
+    public AuthenticationEntryPoint jwtAuthenticationEntryPoint() {
+        return (request, response, authException) -> {
+            log.error("❌ Error de autenticación (401): {} - Path: {}",
+                    authException.getMessage(),
+                    request.getRequestURI());
+
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+            Map<String, Object> errorDetails = new HashMap<>();
+            errorDetails.put("timestamp", LocalDateTime.now().toString());
+            errorDetails.put("status", HttpServletResponse.SC_UNAUTHORIZED);
+            errorDetails.put("error", "Unauthorized");
+            errorDetails.put("message", "Token JWT inválido, expirado o ausente. Por favor, inicie sesión nuevamente.");
+            errorDetails.put("path", request.getRequestURI());
+
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.writeValue(response.getOutputStream(), errorDetails);
+        };
+    }
+
+    /**
+     * Maneja errores de autorización (403 Forbidden)
+     * Se activa cuando:
+     * - El usuario está autenticado (tiene token válido)
+     * - Pero NO tiene los permisos necesarios para acceder al recurso
+     */
+    @Bean
+    public AccessDeniedHandler jwtAccessDeniedHandler() {
+        return (request, response, accessDeniedException) -> {
+            log.error("🚫 Error de autorización (403): {} - Path: {}",
+                    accessDeniedException.getMessage(),
+                    request.getRequestURI());
+
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+
+            Map<String, Object> errorDetails = new HashMap<>();
+            errorDetails.put("timestamp", LocalDateTime.now().toString());
+            errorDetails.put("status", HttpServletResponse.SC_FORBIDDEN);
+            errorDetails.put("error", "Forbidden");
+            errorDetails.put("message", "No tiene permisos suficientes para acceder a este recurso.");
+            errorDetails.put("path", request.getRequestURI());
+
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.writeValue(response.getOutputStream(), errorDetails);
+        };
     }
 
     private void logout(

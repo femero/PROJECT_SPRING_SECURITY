@@ -18,12 +18,16 @@ public final class Token {
     @GeneratedValue
     private Integer id;
 
-    @Column(unique = true)
+    @Column(unique = true, length = 1000)
     private String token;
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private TokenType tokenType = TokenType.BEARER;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private TokenCategory tokenCategory = TokenCategory.ACCESS;
 
     @Column(name = "revoked", nullable = false)
     private Boolean isRevoked;
@@ -39,4 +43,8 @@ public final class Token {
         BEARER
     }
 
+    public enum TokenCategory {
+        ACCESS,
+        REFRESH
+    }
 }

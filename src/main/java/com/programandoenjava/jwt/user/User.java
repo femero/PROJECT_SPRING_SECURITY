@@ -38,15 +38,21 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // IMPORTANTE: Verificar que role no sea null
         if (role == null) {
             return Collections.emptyList();
         }
 
-        // Opción 1: Si tu enum Role tiene el método getAuthorities()
-        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
-        // Opción 2: Si no tienes ese método, usar esto:
-        // return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
+        List<GrantedAuthority> authorities = new java.util.ArrayList<>();
+
+        // Agregar el rol con prefijo ROLE_
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + role.name()));
+
+        // Agregar los permisos del rol
+        role.getPermissions().forEach(permission ->
+                                              authorities.add(new SimpleGrantedAuthority(permission.name()))
+        );
+
+        return authorities;
     }
 
     @Override
@@ -60,25 +66,23 @@ public class User implements UserDetails {
         return email;
     }
 
-    /*@Override
+    @Override
     public boolean isAccountNonExpired() {
         return true;
     }
-*/
- /*   @Override
+
+    @Override
     public boolean isAccountNonLocked() {
-        return true;
-    }*/
-
- /*   @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }*/
-
- /*   @Override
-    public boolean isEnabled() {
         return true;
     }
 
-  */
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
