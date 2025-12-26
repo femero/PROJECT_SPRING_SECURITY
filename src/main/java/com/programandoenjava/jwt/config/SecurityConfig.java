@@ -82,12 +82,12 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/auth/refresh-token").authenticated()
 
                 // Endpoints específicos por ROL
-                .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/v1/editor/**").hasAnyRole("ADMIN", "EDITOR")
+                /*.requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/v1/editor/**").hasAnyRole("ADMIN", "EDITOR")*/
 
                 // Endpoints específicos por PERMISO
-                .requestMatchers("/api/v1/read/**").hasAuthority("READ")
-                .requestMatchers("/api/v1/write/**").hasAuthority("WRITE")
+             /*   .requestMatchers("/api/v1/read/**").hasAuthority("READ")
+                .requestMatchers("/api/v1/write/**").hasAuthority("WRITE")*/
 
                 // Cualquier otra petición requiere autenticación
                 .anyRequest().authenticated();
@@ -113,7 +113,7 @@ public class SecurityConfig {
 
             Map<String, Object> errorDetails = new HashMap<>();
             errorDetails.put("timestamp", LocalDateTime.now().toString());
-            errorDetails.put("status", HttpServletResponse.SC_UNAUTHORIZED);
+            errorDetails.put("status", String.valueOf(HttpServletResponse.SC_UNAUTHORIZED));
             errorDetails.put("error", "Unauthorized");
             errorDetails.put("message", "Token JWT inválido, expirado o ausente. Por favor, inicie sesión nuevamente.");
             errorDetails.put("path", request.getRequestURI());
@@ -141,7 +141,7 @@ public class SecurityConfig {
 
             Map<String, Object> errorDetails = new HashMap<>();
             errorDetails.put("timestamp", LocalDateTime.now().toString());
-            errorDetails.put("status", HttpServletResponse.SC_FORBIDDEN);
+            errorDetails.put("status", String.valueOf(HttpServletResponse.SC_FORBIDDEN));
             errorDetails.put("error", "Forbidden");
             errorDetails.put("message", "No tiene permisos suficientes para acceder a este recurso.");
             errorDetails.put("path", request.getRequestURI());
@@ -165,8 +165,8 @@ public class SecurityConfig {
         final Token storedToken = tokenRepository.findByToken(jwt)
                 .orElse(null);
         if (storedToken != null) {
-            storedToken.setIsExpired(true);
-            storedToken.setIsRevoked(true);
+            storedToken.setIsExpired(Boolean.TRUE);
+            storedToken.setIsRevoked(Boolean.TRUE);
             tokenRepository.save(storedToken);
             SecurityContextHolder.clearContext();
         }

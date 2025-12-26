@@ -5,8 +5,20 @@ import java.util.List;
 
 public enum Role {
 
-    ADMIN(Arrays.asList(Permission.READ, Permission.WRITE)),
-    EDITOR(Arrays.asList(Permission.READ));
+    ADMIN(Arrays.asList(
+            Permission.ACCOUNTS_READ,
+            Permission.ACCOUNTS_WRITE,
+            Permission.TRANSFERS_CREATE,
+            Permission.BENEFICIARIES_MANAGE
+    )),
+    TELLER(Arrays.asList(
+            Permission.ACCOUNTS_READ,
+            Permission.ACCOUNTS_WRITE,
+            Permission.TRANSFERS_CREATE
+    )),
+    CUSTOMER(Arrays.asList(
+            Permission.ACCOUNTS_READ
+    ));
 
     private List<Permission> permissions;
 

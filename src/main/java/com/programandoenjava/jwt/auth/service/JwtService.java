@@ -33,12 +33,8 @@ public class JwtService {
     private int failedValidationHttpCode;
 
     public String extractUsername(String token) {
-        return Jwts.parser()
-                .verifyWith(getSignInKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .getSubject();
+        Claims claims = extractAllClaims(token);
+        return claims.getSubject();
     }
 
     public String generateToken(final User user) {
@@ -50,26 +46,26 @@ public class JwtService {
     }
 
     private String buildToken(final User user, final long expiration) {
+        List<String> scopes = user.getAuthorities().stream()
+                .map(authority -> authority.getAuthority())
+                .filter(auth -> !auth.startsWith("ROLE_"))
+                .toList();
+
         return Jwts
                 .builder()
                 .setHeaderParam(Header.TYPE, "JWT")
-                .claims(Map.of(
-                        "name", user.getName(),
-                        "role", user.getRole().name(),
-                        "authorities", user.getAuthorities().stream()
-                                .map(authority -> authority.getAuthority())
-                                .toList() // Convert authorities to a list of strings
-                ))
-                .subject(user.getEmail())
+                .setSubject("user-" + user.getId())
+                .claim("roles", List.of(user.getRole().name()))
+                .claim("scopes", scopes)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expiration))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSignInKey())
                 .compact();
     }
 
     public boolean isTokenValid(String token, User user) {
-        final String username = extractUsername(token);
-        return (username.equals(user.getEmail())) && !isTokenExpired(token);
+        final String subject = extractUsername(token);
+        return (subject.equals("user-" + user.getId())) && !isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {
@@ -117,19 +113,13 @@ public class JwtService {
     @SuppressWarnings("unchecked")
     public List<String> extractRoles(String token) {
         Claims claims = extractAllClaims(token);
-        
-        // Intentar obtener "roles" como lista
+
+        // Extract "roles" as list
         Object rolesObj = claims.get("roles");
         if (rolesObj instanceof List) {
             return (List<String>) rolesObj;
         }
-        
-        // Intentar obtener "role" como string único
-        String role = claims.get("role", String.class);
-        if (role != null) {
-            return List.of(role);
-        }
-        
+
         return List.of();
     }
 

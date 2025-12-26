@@ -2,10 +2,7 @@ package com.programandoenjava.jwt.user;
 
 import com.programandoenjava.jwt.util.Role;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +11,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -47,9 +45,9 @@ public class User implements UserDetails {
         // Agregar el rol con prefijo ROLE_
         authorities.add(new SimpleGrantedAuthority("ROLE_" + role.name()));
 
-        // Agregar los permisos del rol
+        // Agregar los permisos usando el scope (ej: "accounts:read")
         role.getPermissions().forEach(permission ->
-                                              authorities.add(new SimpleGrantedAuthority(permission.name()))
+                                              authorities.add(new SimpleGrantedAuthority(permission.getScope()))
         );
 
         return authorities;

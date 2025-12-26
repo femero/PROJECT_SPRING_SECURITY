@@ -19,7 +19,7 @@ public class AdminController {
         response.put("message", "Admin Dashboard - Only ADMIN role can access");
         response.put("user", auth.getName());
         response.put("authorities", auth.getAuthorities());
-        response.put("timestamp", System.currentTimeMillis());
+        response.put("timestamp", String.valueOf(System.currentTimeMillis()));
         return ResponseEntity.ok(response);
     }
 
@@ -50,6 +50,37 @@ public class AdminController {
         response.put("message", "Settings updated - Admin only");
         response.put("updatedBy", auth.getName());
         response.put("settings", settings);
+        return ResponseEntity.ok(response);
+    }
+
+    // Endpoints adicionales que demuestran el uso de scopes
+    @GetMapping("/beneficiaries/all")
+    @PreAuthorize("hasAuthority('beneficiaries:manage')")
+    public ResponseEntity<Map<String, Object>> getAllBeneficiaries(Authentication auth) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "All beneficiaries - Requires beneficiaries:manage");
+        response.put("user", auth.getName());
+        response.put("data", "Complete beneficiaries list");
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/transfers/all")
+    @PreAuthorize("hasAuthority('transfers:create')")
+    public ResponseEntity<Map<String, Object>> getAllTransfers(Authentication auth) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "All transfers - Requires transfers:create");
+        response.put("user", auth.getName());
+        response.put("data", "Complete transfers list");
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/accounts/all")
+    @PreAuthorize("hasAuthority('accounts:write')")
+    public ResponseEntity<Map<String, Object>> getAllAccounts(Authentication auth) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "All accounts with write access - Requires accounts:write");
+        response.put("user", auth.getName());
+        response.put("data", "Complete accounts list");
         return ResponseEntity.ok(response);
     }
 }
