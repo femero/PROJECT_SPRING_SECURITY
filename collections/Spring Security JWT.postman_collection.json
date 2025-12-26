@@ -1,8 +1,8 @@
 {
 	"info": {
-		"_postman_id": "576c4d5c-9d1f-49e3-9de8-d1fdb3213eb6",
-		"name": "Spring Security JWT API - Complete",
-		"description": "Colección completa para probar la API de autenticación JWT con roles y permisos",
+		"_postman_id": "8f8aba43-d69f-4bb9-b175-89325a769ce2",
+		"name": "Spring Security JWT",
+		"description": "Colección completa para probar la API bancaria con JWT, roles (ADMIN, TELLER, CUSTOMER) y permisos (accounts, transfers, beneficiaries)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "2644324"
 	},
@@ -40,7 +40,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Admin User\",\n  \"email\": \"admin@example.com\",\n  \"password\": \"admin123\",\n  \"role\": \"ADMIN\"\n}"
+							"raw": "{\n  \"name\": \"Admin User\",\n  \"email\": \"admin@bank.com\",\n  \"password\": \"admin123\",\n  \"role\": \"ADMIN\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/auth/register",
@@ -58,7 +58,7 @@
 					"response": []
 				},
 				{
-					"name": "Register Editor",
+					"name": "Register Teller",
 					"event": [
 						{
 							"listen": "test",
@@ -68,7 +68,7 @@
 									"    var jsonData = pm.response.json();",
 									"    pm.collectionVariables.set('accessToken', jsonData.access_token);",
 									"    pm.collectionVariables.set('refreshToken', jsonData.refresh_token);",
-									"    console.log('✅ Editor registered successfully');",
+									"    console.log('✅ Teller registered successfully');",
 									"}"
 								],
 								"type": "text/javascript"
@@ -85,7 +85,52 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Editor User\",\n  \"email\": \"editor@example.com\",\n  \"password\": \"editor123\",\n  \"role\": \"EDITOR\"\n}"
+							"raw": "{\n  \"name\": \"Teller User\",\n  \"email\": \"teller@bank.com\",\n  \"password\": \"teller123\",\n  \"role\": \"TELLER\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register Customer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set('accessToken', jsonData.access_token);",
+									"    pm.collectionVariables.set('refreshToken', jsonData.refresh_token);",
+									"    console.log('✅ Customer registered successfully');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Customer User\",\n  \"email\": \"customer@bank.com\",\n  \"password\": \"customer123\",\n  \"role\": \"CUSTOMER\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/auth/register",
@@ -130,7 +175,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"admin123\"\n}"
+							"raw": "{\n  \"email\": \"admin@bank.com\",\n  \"password\": \"admin123\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/auth/login",
@@ -148,7 +193,7 @@
 					"response": []
 				},
 				{
-					"name": "Login Editor",
+					"name": "Login Teller",
 					"event": [
 						{
 							"listen": "test",
@@ -175,7 +220,52 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"editor@example.com\",\n  \"password\": \"editor123\"\n}"
+							"raw": "{\n  \"email\": \"teller@bank.com\",\n  \"password\": \"teller123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login Customer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set('accessToken', jsonData.access_token);",
+									"    pm.collectionVariables.set('refreshToken', jsonData.refresh_token);",
+									"    console.log('✅ Login successful');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"customer@bank.com\",\n  \"password\": \"customer123\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/auth/login",
@@ -263,7 +353,8 @@
 								"admin",
 								"dashboard"
 							]
-						}
+						},
+						"description": "Requiere: ROLE_ADMIN"
 					},
 					"response": []
 				},
@@ -289,7 +380,8 @@
 								"admin",
 								"users"
 							]
-						}
+						},
+						"description": "Requiere: ROLE_ADMIN"
 					},
 					"response": []
 				},
@@ -316,7 +408,8 @@
 								"users",
 								"1"
 							]
-						}
+						},
+						"description": "Requiere: ROLE_ADMIN"
 					},
 					"response": []
 				},
@@ -350,17 +443,13 @@
 								"admin",
 								"settings"
 							]
-						}
+						},
+						"description": "Requiere: ROLE_ADMIN"
 					},
 					"response": []
-				}
-			]
-		},
-		{
-			"name": "3. Editor Endpoints (ADMIN or EDITOR)",
-			"item": [
+				},
 				{
-					"name": "Get Content List",
+					"name": "Get All Beneficiaries (Admin)",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -371,22 +460,112 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/v1/editor/content",
+							"raw": "{{baseUrl}}/api/v1/admin/beneficiaries/all",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"api",
 								"v1",
-								"editor",
-								"content"
+								"admin",
+								"beneficiaries",
+								"all"
 							]
-						}
+						},
+						"description": "Requiere: beneficiaries:manage"
 					},
 					"response": []
 				},
 				{
-					"name": "Create Content",
+					"name": "Get All Transfers (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admin/transfers/all",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"transfers",
+								"all"
+							]
+						},
+						"description": "Requiere: transfers:create"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Accounts (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/admin/accounts/all",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"admin",
+								"accounts",
+								"all"
+							]
+						},
+						"description": "Requiere: accounts:write"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Teller Endpoints (ADMIN or TELLER)",
+			"item": [
+				{
+					"name": "Get Accounts List",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/teller/accounts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"teller",
+								"accounts"
+							]
+						},
+						"description": "Requiere: ROLE_ADMIN or ROLE_TELLER"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Account",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -402,25 +581,26 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"title\": \"New Article\",\n  \"body\": \"This is the content of the article\",\n  \"category\": \"Technology\"\n}"
+							"raw": "{\n  \"accountNumber\": \"1234567890\",\n  \"accountType\": \"SAVINGS\",\n  \"balance\": 1000.00,\n  \"customerName\": \"John Doe\",\n  \"currency\": \"USD\"\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/v1/editor/content",
+							"raw": "{{baseUrl}}/api/v1/teller/accounts",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"api",
 								"v1",
-								"editor",
-								"content"
+								"teller",
+								"accounts"
 							]
-						}
+						},
+						"description": "Requiere: accounts:write"
 					},
 					"response": []
 				},
 				{
-					"name": "Update Content",
+					"name": "Update Account",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -436,26 +616,27 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"title\": \"Updated Article\",\n  \"body\": \"This is the updated content\",\n  \"category\": \"Technology\"\n}"
+							"raw": "{\n  \"accountNumber\": \"1234567890\",\n  \"accountType\": \"CHECKING\",\n  \"balance\": 1500.00,\n  \"status\": \"ACTIVE\"\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/v1/editor/content/1",
+							"raw": "{{baseUrl}}/api/v1/teller/accounts/1",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"api",
 								"v1",
-								"editor",
-								"content",
+								"teller",
+								"accounts",
 								"1"
 							]
-						}
+						},
+						"description": "Requiere: accounts:write"
 					},
 					"response": []
 				},
 				{
-					"name": "Delete Content (ADMIN only)",
+					"name": "Delete Account (ADMIN only)",
 					"request": {
 						"method": "DELETE",
 						"header": [
@@ -466,85 +647,24 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/v1/editor/content/1",
+							"raw": "{{baseUrl}}/api/v1/teller/accounts/1",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"api",
 								"v1",
-								"editor",
-								"content",
+								"teller",
+								"accounts",
 								"1"
 							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "4. Read Endpoints (READ permission)",
-			"item": [
-				{
-					"name": "Read Data",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/read/data",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"read",
-								"data"
-							]
-						}
+						},
+						"description": "Requiere: ROLE_ADMIN"
 					},
 					"response": []
 				},
 				{
-					"name": "Read Reports",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/read/reports",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"read",
-								"reports"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "5. Write Endpoints (WRITE permission - ADMIN only)",
-			"item": [
-				{
-					"name": "Write Data",
+					"name": "Create Transfer",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -560,25 +680,120 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"field1\": \"value1\",\n  \"field2\": \"value2\",\n  \"timestamp\": \"2024-12-03\"\n}"
+							"raw": "{\n  \"fromAccount\": \"1234567890\",\n  \"toAccount\": \"0987654321\",\n  \"amount\": 500.00,\n  \"currency\": \"USD\",\n  \"description\": \"Transfer to savings\"\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/v1/write/data",
+							"raw": "{{baseUrl}}/api/v1/teller/transfers",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"api",
 								"v1",
-								"write",
+								"teller",
+								"transfers"
+							]
+						},
+						"description": "Requiere: transfers:create"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Account Endpoints (Permission-based)",
+			"item": [
+				{
+					"name": "Read Account Data",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/accounts/data",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"accounts",
 								"data"
 							]
-						}
+						},
+						"description": "Requiere: accounts:read (Available to ADMIN, TELLER, CUSTOMER)"
 					},
 					"response": []
 				},
 				{
-					"name": "Update Data",
+					"name": "Read Account Reports",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/accounts/reports",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"accounts",
+								"reports"
+							]
+						},
+						"description": "Requiere: accounts:read (Available to ADMIN, TELLER, CUSTOMER)"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Account",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"accountNumber\": \"9876543210\",\n  \"accountType\": \"CHECKING\",\n  \"balance\": 2000.00,\n  \"customerName\": \"Jane Smith\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/accounts/create",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"accounts",
+								"create"
+							]
+						},
+						"description": "Requiere: accounts:write (Available to ADMIN, TELLER)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Account",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -594,26 +809,27 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"field1\": \"updated_value1\",\n  \"field2\": \"updated_value2\"\n}"
+							"raw": "{\n  \"balance\": 2500.00,\n  \"status\": \"ACTIVE\"\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/v1/write/update/1",
+							"raw": "{{baseUrl}}/api/v1/accounts/update/1",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"api",
 								"v1",
-								"write",
+								"accounts",
 								"update",
 								"1"
 							]
-						}
+						},
+						"description": "Requiere: accounts:write (Available to ADMIN, TELLER)"
 					},
 					"response": []
 				},
 				{
-					"name": "Delete Data",
+					"name": "Delete Account",
 					"request": {
 						"method": "DELETE",
 						"header": [
@@ -624,50 +840,142 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/v1/write/delete/1",
+							"raw": "{{baseUrl}}/api/v1/accounts/delete/1",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"api",
 								"v1",
-								"write",
+								"accounts",
 								"delete",
 								"1"
 							]
-						}
+						},
+						"description": "Requiere: accounts:write (Available to ADMIN, TELLER)"
 					},
 					"response": []
 				}
 			]
 		},
 		{
-			"name": "6. Test Endpoints",
+			"name": "5. Transfer Endpoints",
 			"item": [
 				{
-					"name": "Public Endpoint (No Auth)",
+					"name": "Create Transfer",
 					"request": {
-						"method": "GET",
-						"header": [],
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fromAccount\": \"1234567890\",\n  \"toAccount\": \"9876543210\",\n  \"amount\": 750.00,\n  \"currency\": \"USD\",\n  \"description\": \"Payment for services\",\n  \"reference\": \"TRX-2024-001\"\n}"
+						},
 						"url": {
-							"raw": "{{baseUrl}}/api/v1/test/public",
+							"raw": "{{baseUrl}}/api/v1/transfers/create",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"api",
 								"v1",
-								"test",
-								"public"
+								"transfers",
+								"create"
 							]
-						}
+						},
+						"description": "Requiere: transfers:create (Available to ADMIN, TELLER)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "6. Beneficiary Endpoints",
+			"item": [
+				{
+					"name": "Add Beneficiary",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Beneficiary\",\n  \"accountNumber\": \"5555666677\",\n  \"bank\": \"National Bank\",\n  \"email\": \"john.ben@email.com\",\n  \"phone\": \"+1234567890\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/beneficiaries/add",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"beneficiaries",
+								"add"
+							]
+						},
+						"description": "Requiere: beneficiaries:manage (Available to ADMIN only)"
 					},
 					"response": []
 				},
 				{
-					"name": "Protected Endpoint (With Token)",
+					"name": "Update Beneficiary",
 					"request": {
-						"method": "GET",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Updated Beneficiary\",\n  \"email\": \"john.updated@email.com\",\n  \"phone\": \"+1234567899\",\n  \"status\": \"ACTIVE\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/beneficiaries/update/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"beneficiaries",
+								"update",
+								"1"
+							]
+						},
+						"description": "Requiere: beneficiaries:manage (Available to ADMIN only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Beneficiary",
+					"request": {
+						"method": "DELETE",
 						"header": [
 							{
 								"key": "Authorization",
@@ -676,37 +984,19 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/v1/test/protected",
+							"raw": "{{baseUrl}}/api/v1/beneficiaries/delete/1",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"api",
 								"v1",
-								"test",
-								"protected"
+								"beneficiaries",
+								"delete",
+								"1"
 							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Protected Endpoint (Without Token)",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/test/protected",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"test",
-								"protected"
-							]
-						}
+						},
+						"description": "Requiere: beneficiaries:manage (Available to ADMIN only)"
 					},
 					"response": []
 				}

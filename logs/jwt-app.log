@@ -2863,3 +2863,618 @@ org.springframework.security.core.userdetails.UsernameNotFoundException: User no
 2025-12-26 18:19:29.813 [/] DEBUG [http-nio-9100-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
 2025-12-26 18:19:29.813 [/] DEBUG [http-nio-9100-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{message=Admin Dashboard - Only ADMIN role can access, user=admin@example.com, authorities=[ROLE_ADM (truncated)...]
 2025-12-26 18:19:29.820 [/] DEBUG [http-nio-9100-exec-6] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-12-26 18:22:13.712 [/] DEBUG [http-nio-9100-exec-9] o.s.security.web.FilterChainProxy - Securing GET /api/v1/admin/users
+2025-12-26 18:22:13.712 [/] DEBUG [http-nio-9100-exec-9] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /api/v1/admin/users
+2025-12-26 18:22:13.715 [/] ERROR [http-nio-9100-exec-9] c.p.j.config.JwtAuthenticationFilter - Error processing JWT authentication: JWT expired 108713 milliseconds ago at 2025-12-26T23:20:25.000Z. Current time: 2025-12-26T23:22:13.713Z. Allowed clock skew: 0 milliseconds.
+io.jsonwebtoken.ExpiredJwtException: JWT expired 108713 milliseconds ago at 2025-12-26T23:20:25.000Z. Current time: 2025-12-26T23:22:13.713Z. Allowed clock skew: 0 milliseconds.
+	at io.jsonwebtoken.impl.DefaultJwtParser.parse(DefaultJwtParser.java:691)
+	at io.jsonwebtoken.impl.DefaultJwtParser.parse(DefaultJwtParser.java:364)
+	at io.jsonwebtoken.impl.DefaultJwtParser.parse(DefaultJwtParser.java:94)
+	at io.jsonwebtoken.impl.io.AbstractParser.parse(AbstractParser.java:36)
+	at io.jsonwebtoken.impl.io.AbstractParser.parse(AbstractParser.java:29)
+	at io.jsonwebtoken.impl.DefaultJwtParser.parseSignedClaims(DefaultJwtParser.java:830)
+	at com.programandoenjava.jwt.auth.service.JwtService.extractAllClaims(JwtService.java:96)
+	at com.programandoenjava.jwt.auth.service.JwtService.extractUsername(JwtService.java:36)
+	at com.programandoenjava.jwt.config.JwtAuthenticationFilter.doFilterInternal(JwtAuthenticationFilter.java:81)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.servlet.handler.HandlerMappingIntrospector.lambda$createCacheFilter$3(HandlerMappingIntrospector.java:195)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74)
+	at org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebMvcSecurityConfiguration.java:230)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:352)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:268)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:384)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:905)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+2025-12-26 18:22:13.723 [/] DEBUG [http-nio-9100-exec-9] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:22:13.725 [/] ERROR [http-nio-9100-exec-9] c.p.jwt.config.SecurityConfig - ❌ Error de autenticación (401): Full authentication is required to access this resource - Path: /api/v1/admin/users
+2025-12-26 18:22:18.993 [/] DEBUG [http-nio-9100-exec-10] o.s.security.web.FilterChainProxy - Securing POST /api/v1/auth/refresh-token
+2025-12-26 18:22:18.993 [/] DEBUG [http-nio-9100-exec-10] c.p.j.config.JwtAuthenticationFilter - Processing request: POST /api/v1/auth/refresh-token
+2025-12-26 18:22:18.995 [/] DEBUG [http-nio-9100-exec-10] c.p.j.config.JwtAuthenticationFilter - Extracted subject from JWT: user-1
+2025-12-26 18:22:18.998 [/] DEBUG [http-nio-9100-exec-10] org.hibernate.SQL - select u1_0.id,u1_0.email,u1_0.name,u1_0.password,u1_0.role from _user u1_0 where u1_0.id=?
+2025-12-26 18:22:19.000 [/] DEBUG [http-nio-9100-exec-10] c.p.j.config.JwtAuthenticationFilter - Processing refresh token endpoint
+2025-12-26 18:22:19.002 [/] DEBUG [http-nio-9100-exec-10] c.p.j.config.JwtAuthenticationFilter - Refresh token JWT validity: true
+2025-12-26 18:22:19.003 [/] DEBUG [http-nio-9100-exec-10] c.p.j.config.JwtAuthenticationFilter - Authenticating user for refresh token: admin@example.com
+2025-12-26 18:22:19.003 [/] DEBUG [http-nio-9100-exec-10] c.p.j.config.JwtAuthenticationFilter - User details class: com.programandoenjava.jwt.user.User
+2025-12-26 18:22:19.003 [/] DEBUG [http-nio-9100-exec-10] c.p.j.config.JwtAuthenticationFilter - User authorities before auth: [ROLE_ADMIN, accounts:read, accounts:write, transfers:create, beneficiaries:manage]
+2025-12-26 18:22:19.005 [/] DEBUG [http-nio-9100-exec-10] c.p.j.config.JwtAuthenticationFilter - User role from entity: ADMIN
+2025-12-26 18:22:19.006 [/] DEBUG [http-nio-9100-exec-10] c.p.j.config.JwtAuthenticationFilter - User authorities from getAuthorities(): [ROLE_ADMIN, accounts:read, accounts:write, transfers:create, beneficiaries:manage]
+2025-12-26 18:22:19.007 [/] DEBUG [http-nio-9100-exec-10] c.p.j.config.JwtAuthenticationFilter - User admin@example.com authenticated successfully with authorities: [ROLE_ADMIN, accounts:read, accounts:write, transfers:create, beneficiaries:manage]
+2025-12-26 18:22:19.008 [/] DEBUG [http-nio-9100-exec-10] o.s.security.web.FilterChainProxy - Secured POST /api/v1/auth/refresh-token
+2025-12-26 18:22:19.009 [/] DEBUG [http-nio-9100-exec-10] o.s.web.servlet.DispatcherServlet - POST "/api/v1/auth/refresh-token", parameters={}
+2025-12-26 18:22:19.009 [/] DEBUG [http-nio-9100-exec-10] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.programandoenjava.jwt.auth.controller.AuthController#refreshToken(String)
+2025-12-26 18:22:19.010 [/] DEBUG [http-nio-9100-exec-10] c.p.jwt.auth.service.AuthService - Attempting to refresh token
+2025-12-26 18:22:19.013 [/] DEBUG [http-nio-9100-exec-10] org.hibernate.SQL - select u1_0.id,u1_0.email,u1_0.name,u1_0.password,u1_0.role from _user u1_0 where u1_0.id=?
+2025-12-26 18:22:19.026 [/] DEBUG [http-nio-9100-exec-10] org.hibernate.SQL - select t1_0.id,t1_0.expired,t1_0.revoked,t1_0.token,t1_0.token_category,t1_0.token_type,t1_0.user_id from token t1_0 where t1_0.token=?
+2025-12-26 18:22:19.033 [/] DEBUG [http-nio-9100-exec-10] org.hibernate.SQL - update token set expired=?,revoked=?,token=?,token_category=?,token_type=?,user_id=? where id=?
+2025-12-26 18:22:19.043 [/] DEBUG [http-nio-9100-exec-10] org.hibernate.SQL - select t1_0.id,t1_0.expired,t1_0.revoked,t1_0.token,t1_0.token_category,t1_0.token_type,t1_0.user_id from token t1_0 join _user u1_0 on t1_0.user_id=u1_0.id where u1_0.id=? and (t1_0.expired=false or t1_0.revoked=false)
+2025-12-26 18:22:19.045 [/] DEBUG [http-nio-9100-exec-10] c.p.jwt.auth.service.AuthService - Revoking 1 access tokens for user: admin@example.com
+2025-12-26 18:22:19.049 [/] DEBUG [http-nio-9100-exec-10] org.hibernate.SQL - update token set expired=?,revoked=?,token=?,token_category=?,token_type=?,user_id=? where id=?
+2025-12-26 18:22:19.053 [/] DEBUG [http-nio-9100-exec-10] org.hibernate.SQL - insert into token (expired,revoked,token,token_category,token_type,user_id,id) values (?,?,?,?,?,?,?)
+2025-12-26 18:22:19.054 [/] DEBUG [http-nio-9100-exec-10] c.p.jwt.auth.service.AuthService - ACCESS token saved for user: admin@example.com
+2025-12-26 18:22:19.057 [/] DEBUG [http-nio-9100-exec-10] org.hibernate.SQL - insert into token (expired,revoked,token,token_category,token_type,user_id,id) values (?,?,?,?,?,?,?)
+2025-12-26 18:22:19.058 [/] DEBUG [http-nio-9100-exec-10] c.p.jwt.auth.service.AuthService - REFRESH token saved for user: admin@example.com
+2025-12-26 18:22:19.058 [/] INFO  [http-nio-9100-exec-10] c.p.jwt.auth.service.AuthService - Token refreshed successfully for user: admin@example.com
+2025-12-26 18:22:19.060 [/] DEBUG [http-nio-9100-exec-10] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-12-26 18:22:19.061 [/] DEBUG [http-nio-9100-exec-10] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [TokenResponse[accessToken=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyLTEiLCJyb2xlcyI6WyJBR (truncated)...]
+2025-12-26 18:22:19.063 [/] DEBUG [http-nio-9100-exec-10] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-12-26 18:22:22.137 [/] DEBUG [http-nio-9100-exec-1] o.s.security.web.FilterChainProxy - Securing GET /api/v1/admin/users
+2025-12-26 18:22:22.137 [/] DEBUG [http-nio-9100-exec-1] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /api/v1/admin/users
+2025-12-26 18:22:22.138 [/] DEBUG [http-nio-9100-exec-1] c.p.j.config.JwtAuthenticationFilter - Extracted subject from JWT: user-1
+2025-12-26 18:22:22.139 [/] DEBUG [http-nio-9100-exec-1] org.hibernate.SQL - select u1_0.id,u1_0.email,u1_0.name,u1_0.password,u1_0.role from _user u1_0 where u1_0.id=?
+2025-12-26 18:22:22.140 [/] DEBUG [http-nio-9100-exec-1] c.p.j.config.JwtAuthenticationFilter - Processing regular access token
+2025-12-26 18:22:22.142 [/] DEBUG [http-nio-9100-exec-1] org.hibernate.SQL - select t1_0.id,t1_0.expired,t1_0.revoked,t1_0.token,t1_0.token_category,t1_0.token_type,t1_0.user_id from token t1_0 where t1_0.token=?
+2025-12-26 18:22:22.143 [/] DEBUG [http-nio-9100-exec-1] c.p.j.config.JwtAuthenticationFilter - Access token validation - Expired: false, Revoked: false
+2025-12-26 18:22:22.143 [/] DEBUG [http-nio-9100-exec-1] c.p.j.config.JwtAuthenticationFilter - Access token valid in database: true
+2025-12-26 18:22:22.145 [/] DEBUG [http-nio-9100-exec-1] c.p.j.config.JwtAuthenticationFilter - Access token JWT signature and expiration valid: true
+2025-12-26 18:22:22.145 [/] DEBUG [http-nio-9100-exec-1] c.p.j.config.JwtAuthenticationFilter - 🔍 Iniciando validación de claims requeridos
+2025-12-26 18:22:22.146 [/] INFO  [http-nio-9100-exec-1] c.p.j.config.JwtAuthenticationFilter - ✅ Todas las validaciones de claims pasaron exitosamente
+2025-12-26 18:22:22.146 [/] DEBUG [http-nio-9100-exec-1] c.p.j.config.JwtAuthenticationFilter - ✅ Todos los claims requeridos son válidos
+2025-12-26 18:22:22.146 [/] DEBUG [http-nio-9100-exec-1] c.p.j.config.JwtAuthenticationFilter - Authenticating user with access token: admin@example.com
+2025-12-26 18:22:22.146 [/] DEBUG [http-nio-9100-exec-1] c.p.j.config.JwtAuthenticationFilter - User details class: com.programandoenjava.jwt.user.User
+2025-12-26 18:22:22.146 [/] DEBUG [http-nio-9100-exec-1] c.p.j.config.JwtAuthenticationFilter - User authorities before auth: [ROLE_ADMIN, accounts:read, accounts:write, transfers:create, beneficiaries:manage]
+2025-12-26 18:22:22.146 [/] DEBUG [http-nio-9100-exec-1] c.p.j.config.JwtAuthenticationFilter - User role from entity: ADMIN
+2025-12-26 18:22:22.146 [/] DEBUG [http-nio-9100-exec-1] c.p.j.config.JwtAuthenticationFilter - User authorities from getAuthorities(): [ROLE_ADMIN, accounts:read, accounts:write, transfers:create, beneficiaries:manage]
+2025-12-26 18:22:22.146 [/] DEBUG [http-nio-9100-exec-1] c.p.j.config.JwtAuthenticationFilter - User admin@example.com authenticated successfully with authorities: [ROLE_ADMIN, accounts:read, accounts:write, transfers:create, beneficiaries:manage]
+2025-12-26 18:22:22.146 [/] DEBUG [http-nio-9100-exec-1] o.s.security.web.FilterChainProxy - Secured GET /api/v1/admin/users
+2025-12-26 18:22:22.146 [/] DEBUG [http-nio-9100-exec-1] o.s.web.servlet.DispatcherServlet - GET "/api/v1/admin/users", parameters={}
+2025-12-26 18:22:22.147 [/] DEBUG [http-nio-9100-exec-1] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.programandoenjava.jwt.controller.AdminController#getAllUsers(Authentication)
+2025-12-26 18:22:22.148 [/] DEBUG [http-nio-9100-exec-1] o.s.s.a.m.AuthorizationManagerBeforeMethodInterceptor - Authorizing method invocation ReflectiveMethodInvocation: public org.springframework.http.ResponseEntity com.programandoenjava.jwt.controller.AdminController.getAllUsers(org.springframework.security.core.Authentication); target is of class [com.programandoenjava.jwt.controller.AdminController]
+2025-12-26 18:22:22.148 [/] DEBUG [http-nio-9100-exec-1] o.s.s.a.m.AuthorizationManagerBeforeMethodInterceptor - Authorized method invocation ReflectiveMethodInvocation: public org.springframework.http.ResponseEntity com.programandoenjava.jwt.controller.AdminController.getAllUsers(org.springframework.security.core.Authentication); target is of class [com.programandoenjava.jwt.controller.AdminController]
+2025-12-26 18:22:22.148 [/] DEBUG [http-nio-9100-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-12-26 18:22:22.149 [/] DEBUG [http-nio-9100-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{data=User list would be here, message=List of all users - Admin only, user=admin@example.com}]
+2025-12-26 18:22:22.150 [/] DEBUG [http-nio-9100-exec-1] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-12-26 18:37:27.841 [/] INFO  [SpringApplicationShutdownHook] o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-26 18:37:27.856 [/] DEBUG [SpringApplicationShutdownHook] org.hibernate.SQL - drop table if exists _user cascade 
+2025-12-26 18:37:27.878 [/] DEBUG [SpringApplicationShutdownHook] org.hibernate.SQL - drop table if exists token cascade 
+2025-12-26 18:37:27.880 [/] DEBUG [SpringApplicationShutdownHook] org.hibernate.SQL - drop sequence if exists token_seq
+2025-12-26 18:37:27.904 [/] INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-12-26 18:37:27.924 [/] INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-12-26 18:37:37.407 [/] INFO  [main] c.p.jwt.JwtApplication - Starting JwtApplication using Java 21.0.8 with PID 13908 (C:\Users\femer\Downloads\DESARROLLO_BOOTCAMP\PROJECT_SPRING_SECURITY\target\classes started by femer in C:\Users\femer\Downloads\DESARROLLO_BOOTCAMP\PROJECT_SPRING_SECURITY)
+2025-12-26 18:37:37.413 [/] DEBUG [main] c.p.jwt.JwtApplication - Running with Spring Boot v3.3.4, Spring v6.1.13
+2025-12-26 18:37:37.414 [/] INFO  [main] c.p.jwt.JwtApplication - No active profile set, falling back to 1 default profile: "default"
+2025-12-26 18:37:40.195 [/] INFO  [main] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-26 18:37:40.363 [/] INFO  [main] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 157 ms. Found 2 JPA repository interfaces.
+2025-12-26 18:37:42.440 [/] INFO  [main] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 9100 (http)
+2025-12-26 18:37:42.492 [/] INFO  [main] o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-12-26 18:37:42.494 [/] INFO  [main] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.30]
+2025-12-26 18:37:42.686 [/] INFO  [main] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-12-26 18:37:42.686 [/] INFO  [main] o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 5130 ms
+2025-12-26 18:37:42.790 [/] INFO  [main] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-12-26 18:37:43.233 [/] INFO  [main] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:testdb user=SA
+2025-12-26 18:37:43.236 [/] INFO  [main] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-12-26 18:37:43.255 [/] INFO  [main] o.s.b.a.h.H2ConsoleAutoConfiguration - H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:testdb'
+2025-12-26 18:37:43.655 [/] INFO  [main] o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-26 18:37:43.868 [/] INFO  [main] org.hibernate.Version - HHH000412: Hibernate ORM core version 6.5.3.Final
+2025-12-26 18:37:44.006 [/] INFO  [main] o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-12-26 18:37:44.976 [/] INFO  [main] o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-26 18:37:45.118 [/] WARN  [main] org.hibernate.orm.deprecation - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-26 18:37:46.771 [/] INFO  [main] o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-26 18:37:46.799 [/] DEBUG [main] org.hibernate.SQL - drop table if exists _user cascade 
+2025-12-26 18:37:46.805 [/] DEBUG [main] org.hibernate.SQL - drop table if exists token cascade 
+2025-12-26 18:37:46.806 [/] DEBUG [main] org.hibernate.SQL - drop sequence if exists token_seq
+2025-12-26 18:37:46.818 [/] DEBUG [main] org.hibernate.SQL - create sequence token_seq start with 1 increment by 50
+2025-12-26 18:37:46.825 [/] DEBUG [main] org.hibernate.SQL - create table _user (id integer generated by default as identity, email varchar(255) unique, name varchar(255), password varchar(255), role enum ('ADMIN','CUSTOMER','TELLER'), primary key (id))
+2025-12-26 18:37:46.835 [/] DEBUG [main] org.hibernate.SQL - create table token (expired boolean not null, id integer not null, revoked boolean not null, user_id integer, token varchar(1000) unique, token_category enum ('ACCESS','REFRESH'), token_type enum ('BEARER'), primary key (id))
+2025-12-26 18:37:46.837 [/] DEBUG [main] org.hibernate.SQL - alter table if exists token add constraint FKiblu4cjwvyntq3ugo31klp1c6 foreign key (user_id) references _user
+2025-12-26 18:37:46.854 [/] INFO  [main] o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-26 18:37:47.198 [/] DEBUG [main] o.h.s.internal.StatisticsInitiator - Statistics initialized [enabled=false]
+2025-12-26 18:37:47.700 [/] INFO  [main] o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-12-26 18:37:49.176 [/] DEBUG [main] c.p.j.config.JwtAuthenticationFilter - Filter 'jwtAuthenticationFilter' configured for use
+2025-12-26 18:37:49.332 [/] INFO  [main] o.s.s.c.a.a.c.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-12-26 18:37:49.334 [/] WARN  [main] o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used for username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider.
+2025-12-26 18:37:49.905 [/] WARN  [main] o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-26 18:37:50.373 [/] DEBUG [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 30 mappings in 'requestMappingHandlerMapping'
+2025-12-26 18:37:50.593 [/] DEBUG [main] o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**, /swagger-ui*/*swagger-initializer.js, /swagger-ui*/**] in 'resourceHandlerMapping'
+2025-12-26 18:37:50.683 [/] DEBUG [main] o.s.s.web.DefaultSecurityFilterChain - Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, LogoutFilter, JwtAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-12-26 18:37:50.916 [/] DEBUG [main] o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-12-26 18:37:51.031 [/] DEBUG [main] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 2 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-12-26 18:37:51.518 [/] INFO  [main] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 9100 (http) with context path '/'
+2025-12-26 18:37:51.539 [/] INFO  [main] c.p.jwt.JwtApplication - Started JwtApplication in 15.458 seconds (process running for 16.477)
+2025-12-26 18:38:09.997 [/] INFO  [http-nio-9100-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-26 18:38:09.998 [/] INFO  [http-nio-9100-exec-1] o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-12-26 18:38:09.999 [/] DEBUG [http-nio-9100-exec-1] o.s.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-12-26 18:38:10.000 [/] DEBUG [http-nio-9100-exec-1] o.s.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-12-26 18:38:10.000 [/] DEBUG [http-nio-9100-exec-1] o.s.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-12-26 18:38:10.002 [/] DEBUG [http-nio-9100-exec-1] o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@5dca1c50
+2025-12-26 18:38:10.004 [/] DEBUG [http-nio-9100-exec-1] o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@605ef319
+2025-12-26 18:38:10.005 [/] DEBUG [http-nio-9100-exec-1] o.s.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-12-26 18:38:10.006 [/] INFO  [http-nio-9100-exec-1] o.s.web.servlet.DispatcherServlet - Completed initialization in 8 ms
+2025-12-26 18:38:10.055 [/] DEBUG [http-nio-9100-exec-1] o.s.security.web.FilterChainProxy - Securing POST /api/v1/auth/register
+2025-12-26 18:38:10.067 [/] DEBUG [http-nio-9100-exec-1] c.p.j.config.JwtAuthenticationFilter - Processing request: POST /api/v1/auth/register
+2025-12-26 18:38:10.067 [/] DEBUG [http-nio-9100-exec-1] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /api/v1/auth/register
+2025-12-26 18:38:10.072 [/] DEBUG [http-nio-9100-exec-1] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:38:10.076 [/] DEBUG [http-nio-9100-exec-1] o.s.security.web.FilterChainProxy - Secured POST /api/v1/auth/register
+2025-12-26 18:38:10.079 [/] DEBUG [http-nio-9100-exec-1] o.s.web.servlet.DispatcherServlet - POST "/api/v1/auth/register", parameters={}
+2025-12-26 18:38:10.083 [/] DEBUG [http-nio-9100-exec-1] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.programandoenjava.jwt.auth.controller.AuthController#register(RegisterRequest)
+2025-12-26 18:38:10.321 [/] DEBUG [http-nio-9100-exec-1] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [RegisterRequest[name=Admin User, email=admin@bank.com, password=admin123, role=ADMIN]]
+2025-12-26 18:38:10.340 [/] DEBUG [http-nio-9100-exec-1] c.p.jwt.auth.service.AuthService - Attempting to register user with email: admin@bank.com
+2025-12-26 18:38:10.597 [/] DEBUG [http-nio-9100-exec-1] org.hibernate.SQL - select u1_0.id,u1_0.email,u1_0.name,u1_0.password,u1_0.role from _user u1_0 where u1_0.email=?
+2025-12-26 18:38:10.805 [/] DEBUG [http-nio-9100-exec-1] c.p.jwt.auth.service.AuthService - Saving new user: admin@bank.com
+2025-12-26 18:38:10.880 [/] DEBUG [http-nio-9100-exec-1] org.hibernate.SQL - insert into _user (email,name,password,role,id) values (?,?,?,?,default)
+2025-12-26 18:38:11.252 [/] DEBUG [http-nio-9100-exec-1] org.hibernate.SQL - select next value for token_seq
+2025-12-26 18:38:11.263 [/] DEBUG [http-nio-9100-exec-1] org.hibernate.SQL - insert into token (expired,revoked,token,token_category,token_type,user_id,id) values (?,?,?,?,?,?,?)
+2025-12-26 18:38:11.268 [/] DEBUG [http-nio-9100-exec-1] c.p.jwt.auth.service.AuthService - ACCESS token saved for user: admin@bank.com
+2025-12-26 18:38:11.268 [/] DEBUG [http-nio-9100-exec-1] org.hibernate.SQL - select next value for token_seq
+2025-12-26 18:38:11.270 [/] DEBUG [http-nio-9100-exec-1] org.hibernate.SQL - insert into token (expired,revoked,token,token_category,token_type,user_id,id) values (?,?,?,?,?,?,?)
+2025-12-26 18:38:11.272 [/] DEBUG [http-nio-9100-exec-1] c.p.jwt.auth.service.AuthService - REFRESH token saved for user: admin@bank.com
+2025-12-26 18:38:11.273 [/] INFO  [http-nio-9100-exec-1] c.p.jwt.auth.service.AuthService - User registered successfully: admin@bank.com
+2025-12-26 18:38:11.300 [/] DEBUG [http-nio-9100-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-12-26 18:38:11.305 [/] DEBUG [http-nio-9100-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [TokenResponse[accessToken=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyLTEiLCJyb2xlcyI6WyJBR (truncated)...]
+2025-12-26 18:38:11.318 [/] DEBUG [http-nio-9100-exec-1] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-12-26 18:38:18.562 [/] DEBUG [http-nio-9100-exec-3] o.s.security.web.FilterChainProxy - Securing POST /api/v1/auth/register
+2025-12-26 18:38:18.562 [/] DEBUG [http-nio-9100-exec-3] c.p.j.config.JwtAuthenticationFilter - Processing request: POST /api/v1/auth/register
+2025-12-26 18:38:18.562 [/] DEBUG [http-nio-9100-exec-3] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /api/v1/auth/register
+2025-12-26 18:38:18.562 [/] DEBUG [http-nio-9100-exec-3] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:38:18.562 [/] DEBUG [http-nio-9100-exec-3] o.s.security.web.FilterChainProxy - Secured POST /api/v1/auth/register
+2025-12-26 18:38:18.564 [/] DEBUG [http-nio-9100-exec-3] o.s.web.servlet.DispatcherServlet - POST "/api/v1/auth/register", parameters={}
+2025-12-26 18:38:18.565 [/] DEBUG [http-nio-9100-exec-3] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.programandoenjava.jwt.auth.controller.AuthController#register(RegisterRequest)
+2025-12-26 18:38:18.567 [/] DEBUG [http-nio-9100-exec-3] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [RegisterRequest[name=Teller User, email=teller@bank.com, password=teller123, role=TELLER]]
+2025-12-26 18:38:18.568 [/] DEBUG [http-nio-9100-exec-3] c.p.jwt.auth.service.AuthService - Attempting to register user with email: teller@bank.com
+2025-12-26 18:38:18.572 [/] DEBUG [http-nio-9100-exec-3] org.hibernate.SQL - select u1_0.id,u1_0.email,u1_0.name,u1_0.password,u1_0.role from _user u1_0 where u1_0.email=?
+2025-12-26 18:38:18.718 [/] DEBUG [http-nio-9100-exec-3] c.p.jwt.auth.service.AuthService - Saving new user: teller@bank.com
+2025-12-26 18:38:18.721 [/] DEBUG [http-nio-9100-exec-3] org.hibernate.SQL - insert into _user (email,name,password,role,id) values (?,?,?,?,default)
+2025-12-26 18:38:18.731 [/] DEBUG [http-nio-9100-exec-3] org.hibernate.SQL - insert into token (expired,revoked,token,token_category,token_type,user_id,id) values (?,?,?,?,?,?,?)
+2025-12-26 18:38:18.733 [/] DEBUG [http-nio-9100-exec-3] c.p.jwt.auth.service.AuthService - ACCESS token saved for user: teller@bank.com
+2025-12-26 18:38:18.735 [/] DEBUG [http-nio-9100-exec-3] org.hibernate.SQL - insert into token (expired,revoked,token,token_category,token_type,user_id,id) values (?,?,?,?,?,?,?)
+2025-12-26 18:38:18.739 [/] DEBUG [http-nio-9100-exec-3] c.p.jwt.auth.service.AuthService - REFRESH token saved for user: teller@bank.com
+2025-12-26 18:38:18.740 [/] INFO  [http-nio-9100-exec-3] c.p.jwt.auth.service.AuthService - User registered successfully: teller@bank.com
+2025-12-26 18:38:18.742 [/] DEBUG [http-nio-9100-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-12-26 18:38:18.743 [/] DEBUG [http-nio-9100-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [TokenResponse[accessToken=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyLTIiLCJyb2xlcyI6WyJUR (truncated)...]
+2025-12-26 18:38:18.746 [/] DEBUG [http-nio-9100-exec-3] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-12-26 18:38:24.078 [/] DEBUG [http-nio-9100-exec-4] o.s.security.web.FilterChainProxy - Securing POST /api/v1/auth/register
+2025-12-26 18:38:24.078 [/] DEBUG [http-nio-9100-exec-4] c.p.j.config.JwtAuthenticationFilter - Processing request: POST /api/v1/auth/register
+2025-12-26 18:38:24.078 [/] DEBUG [http-nio-9100-exec-4] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /api/v1/auth/register
+2025-12-26 18:38:24.079 [/] DEBUG [http-nio-9100-exec-4] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:38:24.079 [/] DEBUG [http-nio-9100-exec-4] o.s.security.web.FilterChainProxy - Secured POST /api/v1/auth/register
+2025-12-26 18:38:24.079 [/] DEBUG [http-nio-9100-exec-4] o.s.web.servlet.DispatcherServlet - POST "/api/v1/auth/register", parameters={}
+2025-12-26 18:38:24.079 [/] DEBUG [http-nio-9100-exec-4] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.programandoenjava.jwt.auth.controller.AuthController#register(RegisterRequest)
+2025-12-26 18:38:24.081 [/] DEBUG [http-nio-9100-exec-4] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [RegisterRequest[name=Customer User, email=customer@bank.com, password=customer123, role=CUSTOMER]]
+2025-12-26 18:38:24.083 [/] DEBUG [http-nio-9100-exec-4] c.p.jwt.auth.service.AuthService - Attempting to register user with email: customer@bank.com
+2025-12-26 18:38:24.085 [/] DEBUG [http-nio-9100-exec-4] org.hibernate.SQL - select u1_0.id,u1_0.email,u1_0.name,u1_0.password,u1_0.role from _user u1_0 where u1_0.email=?
+2025-12-26 18:38:24.207 [/] DEBUG [http-nio-9100-exec-4] c.p.jwt.auth.service.AuthService - Saving new user: customer@bank.com
+2025-12-26 18:38:24.208 [/] DEBUG [http-nio-9100-exec-4] org.hibernate.SQL - insert into _user (email,name,password,role,id) values (?,?,?,?,default)
+2025-12-26 18:38:24.214 [/] DEBUG [http-nio-9100-exec-4] org.hibernate.SQL - insert into token (expired,revoked,token,token_category,token_type,user_id,id) values (?,?,?,?,?,?,?)
+2025-12-26 18:38:24.217 [/] DEBUG [http-nio-9100-exec-4] c.p.jwt.auth.service.AuthService - ACCESS token saved for user: customer@bank.com
+2025-12-26 18:38:24.222 [/] DEBUG [http-nio-9100-exec-4] org.hibernate.SQL - insert into token (expired,revoked,token,token_category,token_type,user_id,id) values (?,?,?,?,?,?,?)
+2025-12-26 18:38:24.223 [/] DEBUG [http-nio-9100-exec-4] c.p.jwt.auth.service.AuthService - REFRESH token saved for user: customer@bank.com
+2025-12-26 18:38:24.223 [/] INFO  [http-nio-9100-exec-4] c.p.jwt.auth.service.AuthService - User registered successfully: customer@bank.com
+2025-12-26 18:38:24.225 [/] DEBUG [http-nio-9100-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-12-26 18:38:24.225 [/] DEBUG [http-nio-9100-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [TokenResponse[accessToken=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyLTMiLCJyb2xlcyI6WyJDV (truncated)...]
+2025-12-26 18:38:24.228 [/] DEBUG [http-nio-9100-exec-4] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-12-26 18:38:35.978 [/] DEBUG [http-nio-9100-exec-5] o.s.security.web.FilterChainProxy - Securing GET /api/v1/admin/dashboard
+2025-12-26 18:38:35.980 [/] DEBUG [http-nio-9100-exec-5] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /api/v1/admin/dashboard
+2025-12-26 18:38:36.070 [/] DEBUG [http-nio-9100-exec-5] c.p.j.config.JwtAuthenticationFilter - Extracted subject from JWT: user-3
+2025-12-26 18:38:36.099 [/] DEBUG [http-nio-9100-exec-5] org.hibernate.SQL - select u1_0.id,u1_0.email,u1_0.name,u1_0.password,u1_0.role from _user u1_0 where u1_0.id=?
+2025-12-26 18:38:36.105 [/] DEBUG [http-nio-9100-exec-5] c.p.j.config.JwtAuthenticationFilter - Processing regular access token
+2025-12-26 18:38:36.207 [/] DEBUG [http-nio-9100-exec-5] org.hibernate.SQL - select t1_0.id,t1_0.expired,t1_0.revoked,t1_0.token,t1_0.token_category,t1_0.token_type,t1_0.user_id from token t1_0 where t1_0.token=?
+2025-12-26 18:38:36.229 [/] DEBUG [http-nio-9100-exec-5] c.p.j.config.JwtAuthenticationFilter - Access token validation - Expired: false, Revoked: false
+2025-12-26 18:38:36.229 [/] DEBUG [http-nio-9100-exec-5] c.p.j.config.JwtAuthenticationFilter - Access token valid in database: true
+2025-12-26 18:38:36.236 [/] DEBUG [http-nio-9100-exec-5] c.p.j.config.JwtAuthenticationFilter - Access token JWT signature and expiration valid: true
+2025-12-26 18:38:36.236 [/] DEBUG [http-nio-9100-exec-5] c.p.j.config.JwtAuthenticationFilter - 🔍 Iniciando validación de claims requeridos
+2025-12-26 18:38:36.238 [/] INFO  [http-nio-9100-exec-5] c.p.j.config.JwtAuthenticationFilter - ✅ Todas las validaciones de claims pasaron exitosamente
+2025-12-26 18:38:36.238 [/] DEBUG [http-nio-9100-exec-5] c.p.j.config.JwtAuthenticationFilter - ✅ Todos los claims requeridos son válidos
+2025-12-26 18:38:36.239 [/] DEBUG [http-nio-9100-exec-5] c.p.j.config.JwtAuthenticationFilter - Authenticating user with access token: customer@bank.com
+2025-12-26 18:38:36.239 [/] DEBUG [http-nio-9100-exec-5] c.p.j.config.JwtAuthenticationFilter - User details class: com.programandoenjava.jwt.user.User
+2025-12-26 18:38:36.239 [/] DEBUG [http-nio-9100-exec-5] c.p.j.config.JwtAuthenticationFilter - User authorities before auth: [ROLE_CUSTOMER, accounts:read]
+2025-12-26 18:38:36.239 [/] DEBUG [http-nio-9100-exec-5] c.p.j.config.JwtAuthenticationFilter - User role from entity: CUSTOMER
+2025-12-26 18:38:36.240 [/] DEBUG [http-nio-9100-exec-5] c.p.j.config.JwtAuthenticationFilter - User authorities from getAuthorities(): [ROLE_CUSTOMER, accounts:read]
+2025-12-26 18:38:36.240 [/] DEBUG [http-nio-9100-exec-5] c.p.j.config.JwtAuthenticationFilter - User customer@bank.com authenticated successfully with authorities: [ROLE_CUSTOMER, accounts:read]
+2025-12-26 18:38:36.243 [/] DEBUG [http-nio-9100-exec-5] o.s.security.web.FilterChainProxy - Secured GET /api/v1/admin/dashboard
+2025-12-26 18:38:36.243 [/] DEBUG [http-nio-9100-exec-5] o.s.web.servlet.DispatcherServlet - GET "/api/v1/admin/dashboard", parameters={}
+2025-12-26 18:38:36.243 [/] DEBUG [http-nio-9100-exec-5] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.programandoenjava.jwt.controller.AdminController#getDashboard(Authentication)
+2025-12-26 18:38:36.256 [/] DEBUG [http-nio-9100-exec-5] o.s.s.a.m.AuthorizationManagerBeforeMethodInterceptor - Authorizing method invocation ReflectiveMethodInvocation: public org.springframework.http.ResponseEntity com.programandoenjava.jwt.controller.AdminController.getDashboard(org.springframework.security.core.Authentication); target is of class [com.programandoenjava.jwt.controller.AdminController]
+2025-12-26 18:38:36.295 [/] DEBUG [http-nio-9100-exec-5] o.s.s.a.m.AuthorizationManagerBeforeMethodInterceptor - Failed to authorize ReflectiveMethodInvocation: public org.springframework.http.ResponseEntity com.programandoenjava.jwt.controller.AdminController.getDashboard(org.springframework.security.core.Authentication); target is of class [com.programandoenjava.jwt.controller.AdminController] with authorization manager org.springframework.security.authorization.method.PreAuthorizeAuthorizationManager@2244683 and decision ExpressionAuthorizationDecision [granted=false, expressionAttribute=hasRole('ADMIN')]
+2025-12-26 18:38:36.305 [/] DEBUG [http-nio-9100-exec-5] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Using @ExceptionHandler com.programandoenjava.jwt.config.GlobalExceptionHandler#handleRuntimeException(RuntimeException)
+2025-12-26 18:38:36.305 [/] ERROR [http-nio-9100-exec-5] c.p.j.config.GlobalExceptionHandler - Runtime exception: Access Denied
+org.springframework.security.authorization.AuthorizationDeniedException: Access Denied
+	at org.springframework.security.authorization.method.ThrowingMethodAuthorizationDeniedHandler.handleDeniedInvocation(ThrowingMethodAuthorizationDeniedHandler.java:38)
+	at org.springframework.security.authorization.method.PreAuthorizeAuthorizationManager.handleDeniedInvocation(PreAuthorizeAuthorizationManager.java:92)
+	at org.springframework.security.authorization.method.AuthorizationManagerBeforeMethodInterceptor.handle(AuthorizationManagerBeforeMethodInterceptor.java:288)
+	at org.springframework.security.authorization.method.AuthorizationManagerBeforeMethodInterceptor.attemptAuthorization(AuthorizationManagerBeforeMethodInterceptor.java:261)
+	at org.springframework.security.authorization.method.AuthorizationManagerBeforeMethodInterceptor.invoke(AuthorizationManagerBeforeMethodInterceptor.java:197)
+	at org.springframework.security.config.annotation.method.configuration.DeferringMethodInterceptor.invoke(DeferringMethodInterceptor.java:44)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:768)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:720)
+	at com.programandoenjava.jwt.controller.AdminController$$SpringCGLIB$$0.getDashboard(<generated>)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:255)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:188)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:926)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:831)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:903)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:564)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:110)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108)
+	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:365)
+	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:100)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:131)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:85)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at com.programandoenjava.jwt.config.JwtAuthenticationFilter.doFilterInternal(JwtAuthenticationFilter.java:166)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.servlet.handler.HandlerMappingIntrospector.lambda$createCacheFilter$3(HandlerMappingIntrospector.java:195)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74)
+	at org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebMvcSecurityConfiguration.java:230)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:352)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:268)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:384)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:905)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+2025-12-26 18:38:36.343 [/] DEBUG [http-nio-9100-exec-5] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-12-26 18:38:36.346 [/] DEBUG [http-nio-9100-exec-5] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{error=Internal Server Error, message=An unexpected error occurred, timestamp=2025-12-26T18:38:36.34 (truncated)...]
+2025-12-26 18:38:36.354 [/] DEBUG [http-nio-9100-exec-5] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.security.authorization.AuthorizationDeniedException: Access Denied]
+2025-12-26 18:38:36.357 [/] DEBUG [http-nio-9100-exec-5] o.s.web.servlet.DispatcherServlet - Completed 500 INTERNAL_SERVER_ERROR
+2025-12-26 18:39:58.973 [/] DEBUG [http-nio-9100-exec-6] o.s.security.web.FilterChainProxy - Securing POST /h2-console/query.do?jsessionid=7899e53cca1a461350ca6ef83bff5fef
+2025-12-26 18:39:58.974 [/] DEBUG [http-nio-9100-exec-6] c.p.j.config.JwtAuthenticationFilter - Processing request: POST /h2-console/query.do
+2025-12-26 18:39:58.974 [/] DEBUG [http-nio-9100-exec-6] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:39:58.975 [/] DEBUG [http-nio-9100-exec-6] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:39:58.976 [/] DEBUG [http-nio-9100-exec-6] o.s.security.web.FilterChainProxy - Secured POST /h2-console/query.do?jsessionid=7899e53cca1a461350ca6ef83bff5fef
+2025-12-26 18:39:59.042 [/] DEBUG [http-nio-9100-exec-7] o.s.security.web.FilterChainProxy - Securing GET /h2-console/stylesheet.css
+2025-12-26 18:39:59.043 [/] DEBUG [http-nio-9100-exec-7] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/stylesheet.css
+2025-12-26 18:39:59.043 [/] DEBUG [http-nio-9100-exec-7] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:39:59.043 [/] DEBUG [http-nio-9100-exec-7] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:39:59.044 [/] DEBUG [http-nio-9100-exec-7] o.s.security.web.FilterChainProxy - Secured GET /h2-console/stylesheet.css
+2025-12-26 18:39:59.087 [/] DEBUG [http-nio-9100-exec-8] o.s.security.web.FilterChainProxy - Securing GET /h2-console/login.jsp?jsessionid=91749ac6e2f96ba24f223a6c256eef45
+2025-12-26 18:39:59.088 [/] DEBUG [http-nio-9100-exec-8] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/login.jsp
+2025-12-26 18:39:59.088 [/] DEBUG [http-nio-9100-exec-8] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:39:59.088 [/] DEBUG [http-nio-9100-exec-8] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:39:59.089 [/] DEBUG [http-nio-9100-exec-8] o.s.security.web.FilterChainProxy - Secured GET /h2-console/login.jsp?jsessionid=91749ac6e2f96ba24f223a6c256eef45
+2025-12-26 18:39:59.117 [/] DEBUG [http-nio-9100-exec-9] o.s.security.web.FilterChainProxy - Securing GET /h2-console/login.jsp
+2025-12-26 18:39:59.117 [/] DEBUG [http-nio-9100-exec-9] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/login.jsp
+2025-12-26 18:39:59.119 [/] DEBUG [http-nio-9100-exec-9] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:39:59.119 [/] DEBUG [http-nio-9100-exec-9] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:39:59.119 [/] DEBUG [http-nio-9100-exec-9] o.s.security.web.FilterChainProxy - Secured GET /h2-console/login.jsp
+2025-12-26 18:39:59.214 [/] DEBUG [http-nio-9100-exec-10] o.s.security.web.FilterChainProxy - Securing GET /h2-console/login.jsp?jsessionid=9c926f783a287a7d2c3bed879a84c418
+2025-12-26 18:39:59.215 [/] DEBUG [http-nio-9100-exec-10] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/login.jsp
+2025-12-26 18:39:59.215 [/] DEBUG [http-nio-9100-exec-10] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:39:59.216 [/] DEBUG [http-nio-9100-exec-10] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:39:59.217 [/] DEBUG [http-nio-9100-exec-10] o.s.security.web.FilterChainProxy - Secured GET /h2-console/login.jsp?jsessionid=9c926f783a287a7d2c3bed879a84c418
+2025-12-26 18:39:59.312 [/] DEBUG [http-nio-9100-exec-2] o.s.security.web.FilterChainProxy - Securing GET /h2-console/background.gif
+2025-12-26 18:39:59.312 [/] DEBUG [http-nio-9100-exec-2] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/background.gif
+2025-12-26 18:39:59.312 [/] DEBUG [http-nio-9100-exec-2] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:39:59.312 [/] DEBUG [http-nio-9100-exec-2] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:39:59.313 [/] DEBUG [http-nio-9100-exec-2] o.s.security.web.FilterChainProxy - Secured GET /h2-console/background.gif
+2025-12-26 18:39:59.323 [/] DEBUG [http-nio-9100-exec-1] o.s.security.web.FilterChainProxy - Securing GET /favicon.ico
+2025-12-26 18:39:59.323 [/] DEBUG [http-nio-9100-exec-1] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /favicon.ico
+2025-12-26 18:39:59.323 [/] DEBUG [http-nio-9100-exec-1] c.p.j.config.JwtAuthenticationFilter - No valid Authorization header found for: /favicon.ico
+2025-12-26 18:39:59.325 [/] DEBUG [http-nio-9100-exec-1] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:39:59.328 [/] ERROR [http-nio-9100-exec-1] c.p.jwt.config.SecurityConfig - ❌ Error de autenticación (401): Full authentication is required to access this resource - Path: /favicon.ico
+2025-12-26 18:40:04.640 [/] DEBUG [http-nio-9100-exec-3] o.s.security.web.FilterChainProxy - Securing POST /h2-console/login.do?jsessionid=9c926f783a287a7d2c3bed879a84c418
+2025-12-26 18:40:04.640 [/] DEBUG [http-nio-9100-exec-3] c.p.j.config.JwtAuthenticationFilter - Processing request: POST /h2-console/login.do
+2025-12-26 18:40:04.640 [/] DEBUG [http-nio-9100-exec-3] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:04.640 [/] DEBUG [http-nio-9100-exec-3] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:04.641 [/] DEBUG [http-nio-9100-exec-3] o.s.security.web.FilterChainProxy - Secured POST /h2-console/login.do?jsessionid=9c926f783a287a7d2c3bed879a84c418
+2025-12-26 18:40:04.929 [/] DEBUG [http-nio-9100-exec-4] o.s.security.web.FilterChainProxy - Securing GET /h2-console/header.jsp?jsessionid=9c926f783a287a7d2c3bed879a84c418
+2025-12-26 18:40:04.930 [/] DEBUG [http-nio-9100-exec-4] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/header.jsp
+2025-12-26 18:40:04.930 [/] DEBUG [http-nio-9100-exec-4] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:04.930 [/] DEBUG [http-nio-9100-exec-4] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:04.932 [/] DEBUG [http-nio-9100-exec-4] o.s.security.web.FilterChainProxy - Secured GET /h2-console/header.jsp?jsessionid=9c926f783a287a7d2c3bed879a84c418
+2025-12-26 18:40:04.935 [/] DEBUG [http-nio-9100-exec-5] o.s.security.web.FilterChainProxy - Securing GET /h2-console/tables.do?jsessionid=9c926f783a287a7d2c3bed879a84c418
+2025-12-26 18:40:04.937 [/] DEBUG [http-nio-9100-exec-5] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/tables.do
+2025-12-26 18:40:04.937 [/] DEBUG [http-nio-9100-exec-6] o.s.security.web.FilterChainProxy - Securing GET /h2-console/query.jsp?jsessionid=9c926f783a287a7d2c3bed879a84c418
+2025-12-26 18:40:04.937 [/] DEBUG [http-nio-9100-exec-5] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:04.938 [/] DEBUG [http-nio-9100-exec-5] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:04.938 [/] DEBUG [http-nio-9100-exec-6] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/query.jsp
+2025-12-26 18:40:04.938 [/] DEBUG [http-nio-9100-exec-6] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:04.939 [/] DEBUG [http-nio-9100-exec-7] o.s.security.web.FilterChainProxy - Securing GET /h2-console/help.jsp?jsessionid=9c926f783a287a7d2c3bed879a84c418
+2025-12-26 18:40:04.939 [/] DEBUG [http-nio-9100-exec-5] o.s.security.web.FilterChainProxy - Secured GET /h2-console/tables.do?jsessionid=9c926f783a287a7d2c3bed879a84c418
+2025-12-26 18:40:04.939 [/] DEBUG [http-nio-9100-exec-6] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:04.941 [/] DEBUG [http-nio-9100-exec-6] o.s.security.web.FilterChainProxy - Secured GET /h2-console/query.jsp?jsessionid=9c926f783a287a7d2c3bed879a84c418
+2025-12-26 18:40:04.940 [/] DEBUG [http-nio-9100-exec-7] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/help.jsp
+2025-12-26 18:40:04.942 [/] DEBUG [http-nio-9100-exec-7] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:04.942 [/] DEBUG [http-nio-9100-exec-7] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:04.943 [/] DEBUG [http-nio-9100-exec-7] o.s.security.web.FilterChainProxy - Secured GET /h2-console/help.jsp?jsessionid=9c926f783a287a7d2c3bed879a84c418
+2025-12-26 18:40:05.020 [/] DEBUG [http-nio-9100-exec-9] o.s.security.web.FilterChainProxy - Securing GET /h2-console/icon_line.gif
+2025-12-26 18:40:05.020 [/] DEBUG [http-nio-9100-exec-10] o.s.security.web.FilterChainProxy - Securing GET /h2-console/icon_refresh.gif
+2025-12-26 18:40:05.023 [/] DEBUG [http-nio-9100-exec-10] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/icon_refresh.gif
+2025-12-26 18:40:05.022 [/] DEBUG [http-nio-9100-exec-9] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/icon_line.gif
+2025-12-26 18:40:05.023 [/] DEBUG [http-nio-9100-exec-10] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:05.023 [/] DEBUG [http-nio-9100-exec-9] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:05.025 [/] DEBUG [http-nio-9100-exec-10] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:05.025 [/] DEBUG [http-nio-9100-exec-9] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:05.026 [/] DEBUG [http-nio-9100-exec-10] o.s.security.web.FilterChainProxy - Secured GET /h2-console/icon_refresh.gif
+2025-12-26 18:40:05.026 [/] DEBUG [http-nio-9100-exec-9] o.s.security.web.FilterChainProxy - Secured GET /h2-console/icon_line.gif
+2025-12-26 18:40:05.030 [/] DEBUG [http-nio-9100-exec-1] o.s.security.web.FilterChainProxy - Securing GET /h2-console/icon_commit.gif
+2025-12-26 18:40:05.033 [/] DEBUG [http-nio-9100-exec-8] o.s.security.web.FilterChainProxy - Securing GET /h2-console/icon_disconnect.gif
+2025-12-26 18:40:05.034 [/] DEBUG [http-nio-9100-exec-1] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/icon_commit.gif
+2025-12-26 18:40:05.034 [/] DEBUG [http-nio-9100-exec-1] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:05.034 [/] DEBUG [http-nio-9100-exec-8] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/icon_disconnect.gif
+2025-12-26 18:40:05.035 [/] DEBUG [http-nio-9100-exec-1] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:05.035 [/] DEBUG [http-nio-9100-exec-8] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:05.035 [/] DEBUG [http-nio-9100-exec-8] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:05.035 [/] DEBUG [http-nio-9100-exec-8] o.s.security.web.FilterChainProxy - Secured GET /h2-console/icon_disconnect.gif
+2025-12-26 18:40:05.035 [/] DEBUG [http-nio-9100-exec-3] o.s.security.web.FilterChainProxy - Securing GET /h2-console/icon_run.gif
+2025-12-26 18:40:05.037 [/] DEBUG [http-nio-9100-exec-3] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/icon_run.gif
+2025-12-26 18:40:05.037 [/] DEBUG [http-nio-9100-exec-3] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:05.037 [/] DEBUG [http-nio-9100-exec-3] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:05.037 [/] DEBUG [http-nio-9100-exec-2] o.s.security.web.FilterChainProxy - Securing GET /h2-console/icon_rollback.gif
+2025-12-26 18:40:05.037 [/] DEBUG [http-nio-9100-exec-2] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/icon_rollback.gif
+2025-12-26 18:40:05.038 [/] DEBUG [http-nio-9100-exec-3] o.s.security.web.FilterChainProxy - Secured GET /h2-console/icon_run.gif
+2025-12-26 18:40:05.038 [/] DEBUG [http-nio-9100-exec-2] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:05.038 [/] DEBUG [http-nio-9100-exec-2] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:05.038 [/] DEBUG [http-nio-9100-exec-1] o.s.security.web.FilterChainProxy - Secured GET /h2-console/icon_commit.gif
+2025-12-26 18:40:05.038 [/] DEBUG [http-nio-9100-exec-2] o.s.security.web.FilterChainProxy - Secured GET /h2-console/icon_rollback.gif
+2025-12-26 18:40:05.069 [/] DEBUG [http-nio-9100-exec-8] o.s.security.web.FilterChainProxy - Securing GET /h2-console/icon_stop.gif
+2025-12-26 18:40:05.070 [/] DEBUG [http-nio-9100-exec-3] o.s.security.web.FilterChainProxy - Securing GET /h2-console/icon_help.gif
+2025-12-26 18:40:05.070 [/] DEBUG [http-nio-9100-exec-9] o.s.security.web.FilterChainProxy - Securing GET /h2-console/icon_run_selected.gif
+2025-12-26 18:40:05.070 [/] DEBUG [http-nio-9100-exec-8] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/icon_stop.gif
+2025-12-26 18:40:05.071 [/] DEBUG [http-nio-9100-exec-8] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:05.070 [/] DEBUG [http-nio-9100-exec-3] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/icon_help.gif
+2025-12-26 18:40:05.070 [/] DEBUG [http-nio-9100-exec-9] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/icon_run_selected.gif
+2025-12-26 18:40:05.071 [/] DEBUG [http-nio-9100-exec-8] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:05.072 [/] DEBUG [http-nio-9100-exec-9] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:05.071 [/] DEBUG [http-nio-9100-exec-3] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:05.072 [/] DEBUG [http-nio-9100-exec-9] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:05.072 [/] DEBUG [http-nio-9100-exec-3] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:05.073 [/] DEBUG [http-nio-9100-exec-9] o.s.security.web.FilterChainProxy - Secured GET /h2-console/icon_run_selected.gif
+2025-12-26 18:40:05.073 [/] DEBUG [http-nio-9100-exec-3] o.s.security.web.FilterChainProxy - Secured GET /h2-console/icon_help.gif
+2025-12-26 18:40:05.073 [/] DEBUG [http-nio-9100-exec-8] o.s.security.web.FilterChainProxy - Secured GET /h2-console/icon_stop.gif
+2025-12-26 18:40:05.090 [/] DEBUG [http-nio-9100-exec-1] o.s.security.web.FilterChainProxy - Securing GET /h2-console/icon_history.gif
+2025-12-26 18:40:05.091 [/] DEBUG [http-nio-9100-exec-1] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/icon_history.gif
+2025-12-26 18:40:05.091 [/] DEBUG [http-nio-9100-exec-1] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:05.091 [/] DEBUG [http-nio-9100-exec-1] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:05.095 [/] DEBUG [http-nio-9100-exec-1] o.s.security.web.FilterChainProxy - Secured GET /h2-console/icon_history.gif
+2025-12-26 18:40:05.294 [/] DEBUG [http-nio-9100-exec-4] o.s.security.web.FilterChainProxy - Securing GET /h2-console/tree.js
+2025-12-26 18:40:05.294 [/] DEBUG [http-nio-9100-exec-4] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/tree.js
+2025-12-26 18:40:05.294 [/] DEBUG [http-nio-9100-exec-4] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:05.294 [/] DEBUG [http-nio-9100-exec-4] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:05.296 [/] DEBUG [http-nio-9100-exec-4] o.s.security.web.FilterChainProxy - Secured GET /h2-console/tree.js
+2025-12-26 18:40:05.324 [/] DEBUG [http-nio-9100-exec-6] o.s.security.web.FilterChainProxy - Securing GET /h2-console/tree_minus.gif
+2025-12-26 18:40:05.324 [/] DEBUG [http-nio-9100-exec-7] o.s.security.web.FilterChainProxy - Securing GET /h2-console/tree_plus.gif
+2025-12-26 18:40:05.328 [/] DEBUG [http-nio-9100-exec-6] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/tree_minus.gif
+2025-12-26 18:40:05.328 [/] DEBUG [http-nio-9100-exec-6] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:05.328 [/] DEBUG [http-nio-9100-exec-6] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:05.329 [/] DEBUG [http-nio-9100-exec-7] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/tree_plus.gif
+2025-12-26 18:40:05.329 [/] DEBUG [http-nio-9100-exec-7] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:05.330 [/] DEBUG [http-nio-9100-exec-10] o.s.security.web.FilterChainProxy - Securing GET /h2-console/tree_database.gif
+2025-12-26 18:40:05.330 [/] DEBUG [http-nio-9100-exec-7] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:05.330 [/] DEBUG [http-nio-9100-exec-10] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/tree_database.gif
+2025-12-26 18:40:05.334 [/] DEBUG [http-nio-9100-exec-10] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:05.336 [/] DEBUG [http-nio-9100-exec-7] o.s.security.web.FilterChainProxy - Secured GET /h2-console/tree_plus.gif
+2025-12-26 18:40:05.336 [/] DEBUG [http-nio-9100-exec-10] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:05.337 [/] DEBUG [http-nio-9100-exec-10] o.s.security.web.FilterChainProxy - Secured GET /h2-console/tree_database.gif
+2025-12-26 18:40:05.341 [/] DEBUG [http-nio-9100-exec-9] o.s.security.web.FilterChainProxy - Securing GET /h2-console/tree_empty.gif
+2025-12-26 18:40:05.342 [/] DEBUG [http-nio-9100-exec-9] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/tree_empty.gif
+2025-12-26 18:40:05.342 [/] DEBUG [http-nio-9100-exec-9] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:05.343 [/] DEBUG [http-nio-9100-exec-6] o.s.security.web.FilterChainProxy - Secured GET /h2-console/tree_minus.gif
+2025-12-26 18:40:05.344 [/] DEBUG [http-nio-9100-exec-9] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:05.350 [/] DEBUG [http-nio-9100-exec-2] o.s.security.web.FilterChainProxy - Securing GET /h2-console/tree_table.gif
+2025-12-26 18:40:05.350 [/] DEBUG [http-nio-9100-exec-2] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/tree_table.gif
+2025-12-26 18:40:05.350 [/] DEBUG [http-nio-9100-exec-2] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:05.350 [/] DEBUG [http-nio-9100-exec-2] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:05.350 [/] DEBUG [http-nio-9100-exec-2] o.s.security.web.FilterChainProxy - Secured GET /h2-console/tree_table.gif
+2025-12-26 18:40:05.354 [/] DEBUG [http-nio-9100-exec-9] o.s.security.web.FilterChainProxy - Secured GET /h2-console/tree_empty.gif
+2025-12-26 18:40:05.356 [/] DEBUG [http-nio-9100-exec-8] o.s.security.web.FilterChainProxy - Securing GET /h2-console/tree_index_az.gif
+2025-12-26 18:40:05.356 [/] DEBUG [http-nio-9100-exec-8] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/tree_index_az.gif
+2025-12-26 18:40:05.357 [/] DEBUG [http-nio-9100-exec-8] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:05.350 [/] DEBUG [http-nio-9100-exec-3] o.s.security.web.FilterChainProxy - Securing GET /h2-console/tree_column.gif
+2025-12-26 18:40:05.358 [/] DEBUG [http-nio-9100-exec-8] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:05.359 [/] DEBUG [http-nio-9100-exec-8] o.s.security.web.FilterChainProxy - Secured GET /h2-console/tree_index_az.gif
+2025-12-26 18:40:05.361 [/] DEBUG [http-nio-9100-exec-3] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/tree_column.gif
+2025-12-26 18:40:05.361 [/] DEBUG [http-nio-9100-exec-3] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:05.362 [/] DEBUG [http-nio-9100-exec-3] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:05.363 [/] DEBUG [http-nio-9100-exec-10] o.s.security.web.FilterChainProxy - Securing GET /h2-console/tree_type.gif
+2025-12-26 18:40:05.366 [/] DEBUG [http-nio-9100-exec-10] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/tree_type.gif
+2025-12-26 18:40:05.366 [/] DEBUG [http-nio-9100-exec-10] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:05.366 [/] DEBUG [http-nio-9100-exec-10] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:05.365 [/] DEBUG [http-nio-9100-exec-3] o.s.security.web.FilterChainProxy - Secured GET /h2-console/tree_column.gif
+2025-12-26 18:40:05.368 [/] DEBUG [http-nio-9100-exec-10] o.s.security.web.FilterChainProxy - Secured GET /h2-console/tree_type.gif
+2025-12-26 18:40:05.392 [/] DEBUG [http-nio-9100-exec-1] o.s.security.web.FilterChainProxy - Securing GET /h2-console/tree_index.gif
+2025-12-26 18:40:05.398 [/] DEBUG [http-nio-9100-exec-1] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/tree_index.gif
+2025-12-26 18:40:05.398 [/] DEBUG [http-nio-9100-exec-1] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:05.400 [/] DEBUG [http-nio-9100-exec-1] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:05.403 [/] DEBUG [http-nio-9100-exec-1] o.s.security.web.FilterChainProxy - Secured GET /h2-console/tree_index.gif
+2025-12-26 18:40:05.468 [/] DEBUG [http-nio-9100-exec-4] o.s.security.web.FilterChainProxy - Securing GET /h2-console/tree_view.gif
+2025-12-26 18:40:05.468 [/] DEBUG [http-nio-9100-exec-5] o.s.security.web.FilterChainProxy - Securing GET /h2-console/tree_folder.gif
+2025-12-26 18:40:05.468 [/] DEBUG [http-nio-9100-exec-4] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/tree_view.gif
+2025-12-26 18:40:05.468 [/] DEBUG [http-nio-9100-exec-5] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/tree_folder.gif
+2025-12-26 18:40:05.468 [/] DEBUG [http-nio-9100-exec-4] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:05.468 [/] DEBUG [http-nio-9100-exec-5] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:05.470 [/] DEBUG [http-nio-9100-exec-4] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:05.470 [/] DEBUG [http-nio-9100-exec-5] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:05.471 [/] DEBUG [http-nio-9100-exec-4] o.s.security.web.FilterChainProxy - Secured GET /h2-console/tree_view.gif
+2025-12-26 18:40:05.471 [/] DEBUG [http-nio-9100-exec-5] o.s.security.web.FilterChainProxy - Secured GET /h2-console/tree_folder.gif
+2025-12-26 18:40:05.477 [/] DEBUG [http-nio-9100-exec-6] o.s.security.web.FilterChainProxy - Securing GET /h2-console/tree_sequence.gif
+2025-12-26 18:40:05.477 [/] DEBUG [http-nio-9100-exec-6] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/tree_sequence.gif
+2025-12-26 18:40:05.477 [/] DEBUG [http-nio-9100-exec-6] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:05.477 [/] DEBUG [http-nio-9100-exec-6] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:05.478 [/] DEBUG [http-nio-9100-exec-7] o.s.security.web.FilterChainProxy - Securing GET /h2-console/tree_sequences.gif
+2025-12-26 18:40:05.478 [/] DEBUG [http-nio-9100-exec-7] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/tree_sequences.gif
+2025-12-26 18:40:05.478 [/] DEBUG [http-nio-9100-exec-7] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:05.478 [/] DEBUG [http-nio-9100-exec-7] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:05.478 [/] DEBUG [http-nio-9100-exec-6] o.s.security.web.FilterChainProxy - Secured GET /h2-console/tree_sequence.gif
+2025-12-26 18:40:05.479 [/] DEBUG [http-nio-9100-exec-7] o.s.security.web.FilterChainProxy - Secured GET /h2-console/tree_sequences.gif
+2025-12-26 18:40:05.488 [/] DEBUG [http-nio-9100-exec-2] o.s.security.web.FilterChainProxy - Securing GET /h2-console/tree_user.gif
+2025-12-26 18:40:05.488 [/] DEBUG [http-nio-9100-exec-8] o.s.security.web.FilterChainProxy - Securing GET /h2-console/tree_users.gif
+2025-12-26 18:40:05.489 [/] DEBUG [http-nio-9100-exec-8] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/tree_users.gif
+2025-12-26 18:40:05.489 [/] DEBUG [http-nio-9100-exec-8] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:05.489 [/] DEBUG [http-nio-9100-exec-2] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/tree_user.gif
+2025-12-26 18:40:05.490 [/] DEBUG [http-nio-9100-exec-2] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:05.490 [/] DEBUG [http-nio-9100-exec-2] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:05.490 [/] DEBUG [http-nio-9100-exec-2] o.s.security.web.FilterChainProxy - Secured GET /h2-console/tree_user.gif
+2025-12-26 18:40:05.491 [/] DEBUG [http-nio-9100-exec-3] o.s.security.web.FilterChainProxy - Securing GET /h2-console/tree_info.gif
+2025-12-26 18:40:05.491 [/] DEBUG [http-nio-9100-exec-8] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:05.492 [/] DEBUG [http-nio-9100-exec-3] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/tree_info.gif
+2025-12-26 18:40:05.493 [/] DEBUG [http-nio-9100-exec-3] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:05.493 [/] DEBUG [http-nio-9100-exec-3] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:05.493 [/] DEBUG [http-nio-9100-exec-3] o.s.security.web.FilterChainProxy - Secured GET /h2-console/tree_info.gif
+2025-12-26 18:40:05.497 [/] DEBUG [http-nio-9100-exec-8] o.s.security.web.FilterChainProxy - Secured GET /h2-console/tree_users.gif
+2025-12-26 18:40:10.595 [/] DEBUG [http-nio-9100-exec-9] o.s.security.web.FilterChainProxy - Securing POST /h2-console/query.do?jsessionid=9c926f783a287a7d2c3bed879a84c418
+2025-12-26 18:40:10.595 [/] DEBUG [http-nio-9100-exec-9] c.p.j.config.JwtAuthenticationFilter - Processing request: POST /h2-console/query.do
+2025-12-26 18:40:10.595 [/] DEBUG [http-nio-9100-exec-9] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:10.595 [/] DEBUG [http-nio-9100-exec-9] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:10.596 [/] DEBUG [http-nio-9100-exec-9] o.s.security.web.FilterChainProxy - Secured POST /h2-console/query.do?jsessionid=9c926f783a287a7d2c3bed879a84c418
+2025-12-26 18:40:10.615 [/] DEBUG [http-nio-9100-exec-10] o.s.security.web.FilterChainProxy - Securing GET /h2-console/stylesheet.css
+2025-12-26 18:40:10.615 [/] DEBUG [http-nio-9100-exec-1] o.s.security.web.FilterChainProxy - Securing GET /h2-console/table.js
+2025-12-26 18:40:10.615 [/] DEBUG [http-nio-9100-exec-10] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/stylesheet.css
+2025-12-26 18:40:10.615 [/] DEBUG [http-nio-9100-exec-1] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/table.js
+2025-12-26 18:40:10.615 [/] DEBUG [http-nio-9100-exec-10] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:10.615 [/] DEBUG [http-nio-9100-exec-1] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:10.615 [/] DEBUG [http-nio-9100-exec-10] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:10.616 [/] DEBUG [http-nio-9100-exec-1] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:10.618 [/] DEBUG [http-nio-9100-exec-10] o.s.security.web.FilterChainProxy - Secured GET /h2-console/stylesheet.css
+2025-12-26 18:40:10.618 [/] DEBUG [http-nio-9100-exec-1] o.s.security.web.FilterChainProxy - Secured GET /h2-console/table.js
+2025-12-26 18:40:31.231 [/] DEBUG [http-nio-9100-exec-5] o.s.security.web.FilterChainProxy - Securing POST /h2-console/query.do?jsessionid=9c926f783a287a7d2c3bed879a84c418
+2025-12-26 18:40:31.231 [/] DEBUG [http-nio-9100-exec-5] c.p.j.config.JwtAuthenticationFilter - Processing request: POST /h2-console/query.do
+2025-12-26 18:40:31.231 [/] DEBUG [http-nio-9100-exec-5] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:31.231 [/] DEBUG [http-nio-9100-exec-5] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:31.231 [/] DEBUG [http-nio-9100-exec-5] o.s.security.web.FilterChainProxy - Secured POST /h2-console/query.do?jsessionid=9c926f783a287a7d2c3bed879a84c418
+2025-12-26 18:40:31.243 [/] DEBUG [http-nio-9100-exec-7] o.s.security.web.FilterChainProxy - Securing GET /h2-console/table.js
+2025-12-26 18:40:31.243 [/] DEBUG [http-nio-9100-exec-7] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/table.js
+2025-12-26 18:40:31.243 [/] DEBUG [http-nio-9100-exec-7] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:31.243 [/] DEBUG [http-nio-9100-exec-7] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:31.244 [/] DEBUG [http-nio-9100-exec-7] o.s.security.web.FilterChainProxy - Secured GET /h2-console/table.js
+2025-12-26 18:40:31.244 [/] DEBUG [http-nio-9100-exec-4] o.s.security.web.FilterChainProxy - Securing GET /h2-console/stylesheet.css
+2025-12-26 18:40:31.244 [/] DEBUG [http-nio-9100-exec-4] c.p.j.config.JwtAuthenticationFilter - Processing request: GET /h2-console/stylesheet.css
+2025-12-26 18:40:31.245 [/] DEBUG [http-nio-9100-exec-4] c.p.j.config.JwtAuthenticationFilter - Skipping JWT filter completely for public path: /h2-console
+2025-12-26 18:40:31.245 [/] DEBUG [http-nio-9100-exec-4] o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-12-26 18:40:31.245 [/] DEBUG [http-nio-9100-exec-4] o.s.security.web.FilterChainProxy - Secured GET /h2-console/stylesheet.css
+2025-12-26 18:43:29.168 [/] INFO  [SpringApplicationShutdownHook] o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-26 18:43:29.170 [/] DEBUG [SpringApplicationShutdownHook] org.hibernate.SQL - drop table if exists _user cascade 
+2025-12-26 18:43:29.177 [/] DEBUG [SpringApplicationShutdownHook] org.hibernate.SQL - drop table if exists token cascade 
+2025-12-26 18:43:29.180 [/] DEBUG [SpringApplicationShutdownHook] org.hibernate.SQL - drop sequence if exists token_seq
+2025-12-26 18:43:29.189 [/] INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-12-26 18:43:29.195 [/] INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
