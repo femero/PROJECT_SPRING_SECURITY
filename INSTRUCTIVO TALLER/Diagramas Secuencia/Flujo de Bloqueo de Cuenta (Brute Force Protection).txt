@@ -1,0 +1,36 @@
+sequenceDiagram
+    autonumber
+    participant Client
+    participant AuthService
+    participant LoginAttemptService
+    participant MetricsService
+
+    loop Intentos 1-4
+        Client->>AuthService: authenticate(wrongCredentials)
+        AuthService->>LoginAttemptService: isBlocked(email)
+        LoginAttemptService-->>AuthService: false
+        AuthService->>AuthService: authenticationManager.authenticate()
+        Note over AuthService: Authentication fails
+        AuthService->>LoginAttemptService: loginFailed(email)
+        LoginAttemptService->>LoginAttemptService: attempts++ (attemptsCache)
+        AuthService-->>Client: 401 Invalid credentials
+    end
+    
+    Client->>AuthService: authenticate(wrongCredentials) [5th attempt]
+    AuthService->>LoginAttemptService: isBlocked(email)
+    LoginAttemptService-->>AuthService: false
+    AuthService->>AuthService: authenticationManager.authenticate()
+    Note over AuthService: Authentication fails
+    AuthService->>LoginAttemptService: loginFailed(email)
+    LoginAttemptService->>LoginAttemptService: attempts = 5 >= MAX_ATTEMPTS
+    LoginAttemptService->>LoginAttemptService: lockoutCache.put(email, now + 15min)
+    LoginAttemptService->>MetricsService: incrementAccountLockout()
+    AuthService-->>Client: 401 Invalid credentials
+    
+    Note over Client,MetricsService: Próximos 15 minutos
+    
+    Client->>AuthService: authenticate(anyCredentials)
+    AuthService->>LoginAttemptService: isBlocked(email)
+    LoginAttemptService-->>AuthService: true (locked)
+    AuthService->>MetricsService: incrementLoginFailure()
+    AuthService-->>Client: 403 Account temporarily locked

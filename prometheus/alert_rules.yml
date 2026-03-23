@@ -1,0 +1,360 @@
+# prometheus/alert_rules.yml
+groups:
+  # ============================================
+  # Alertas de Infraestructura
+  # ============================================
+  - name: infrastructure_alerts
+    interval: 30s
+    rules:
+      # Servicio caído
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+          category: infrastructure
+        annotations:
+          summary: "Service {{ $labels.job }} is down"
+          description: "{{ $labels.job }} on {{ $labels.instance }} has been down for more than 1 minute."
+          runbook: "Check service logs and restart if necessary"
+
+      # CPU alta
+      - alert: HighCPUUsage
+        expr: process_cpu_usage > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          category: infrastructure
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is above 80% for more than 5 minutes. Current value: {{ $value | humanizePercentage }}"
+
+      # Memoria alta
+      - alert: HighMemoryUsage
+        expr: jvm_memory_used_bytes{area="heap"} / jvm_memory_max_bytes{area="heap"} > 0.85
+        for: 5m
+        labels:
+          severity: warning
+          category: infrastructure
+        annotations:
+          summary: "High JVM heap memory usage on {{ $labels.instance }}"
+          description: "JVM heap memory usage is above 85%. Current: {{ $value | humanizePercentage }}"
+
+  # ============================================
+  # Alertas de Aplicación Spring Boot
+  # ============================================
+  - name: spring_boot_alerts
+    interval: 30s
+    rules:
+      # Tasa de errores HTTP alta
+      - alert: HighHTTPErrorRate
+        expr: |
+          (
+            sum(rate(http_server_requests_seconds_count{status=~"5.."}[5m])) by (instance)
+            /
+            sum(rate(http_server_requests_seconds_count[5m])) by (instance)
+          ) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+          category: application
+        annotations:
+          summary: "High HTTP 5xx error rate on {{ $labels.instance }}"
+          description: "More than 5% of requests are failing with 5xx errors. Current rate: {{ $value | humanizePercentage }}"
+
+      # Errores 4xx altos (posibles ataques)
+      - alert: HighHTTP4xxRate
+        expr: |
+          (
+            sum(rate(http_server_requests_seconds_count{status=~"4.."}[5m])) by (instance)
+            /
+            sum(rate(http_server_requests_seconds_count[5m])) by (instance)
+          ) > 0.15
+        for: 5m
+        labels:
+          severity: warning
+          category: application
+        annotations:
+          summary: "High HTTP 4xx error rate on {{ $labels.instance }}"
+          description: "More than 15% of requests are returning 4xx errors. Possible attack or misconfiguration. Current rate: {{ $value | humanizePercentage }}"
+
+      # Latencia alta
+      - alert: HighRequestLatency
+        expr: |
+          histogram_quantile(0.95, 
+            sum(rate(http_server_requests_seconds_bucket[5m])) by (le, instance)
+          ) > 1
+        for: 5m
+        labels:
+          severity: warning
+          category: performance
+        annotations:
+          summary: "High request latency on {{ $labels.instance }}"
+          description: "95th percentile latency is above 1 second. Current: {{ $value }}s"
+
+      # Throughput bajo (posible problema)
+      - alert: LowRequestThroughput
+        expr: |
+          sum(rate(http_server_requests_seconds_count[5m])) by (instance) < 0.1
+        for: 10m
+        labels:
+          severity: warning
+          category: application
+        annotations:
+          summary: "Low request throughput on {{ $labels.instance }}"
+          description: "Request rate is very low (< 0.1 req/s). Service might be unreachable."
+
+  # ============================================
+  # Alertas de Seguridad JWT
+  # ============================================
+  - name: security_alerts
+    interval: 30s
+    rules:
+      # Tasa alta de fallos de autenticación
+      - alert: HighAuthenticationFailureRate
+        expr: |
+          sum(rate(http_server_requests_seconds_count{uri="/api/v1/auth/authenticate", status="403"}[5m])) > 5
+        for: 2m
+        labels:
+          severity: warning
+          category: security
+        annotations:
+          summary: "High authentication failure rate"
+          description: "More than 5 failed authentication attempts per second. Possible brute force attack."
+
+      # Múltiples intentos de acceso no autorizado
+      - alert: UnauthorizedAccessAttempts
+        expr: |
+          increase(http_server_requests_seconds_count{status="401"}[1m]) > 2
+        for: 30s
+        labels:
+          severity: warning
+          category: security
+        annotations:
+          summary: "High rate of unauthorized access attempts"
+          description: "More than 2 unauthorized (401) requests detected in the last minute."
+
+  # ============================================
+  # Alertas de Base de Datos
+  # ============================================
+  - name: database_alerts
+    interval: 30s
+    rules:
+      # Conexiones de DB altas
+      - alert: HighDatabaseConnections
+        expr: hikaricp_connections_active > 8
+        for: 5m
+        labels:
+          severity: warning
+          category: database
+        annotations:
+          summary: "High number of active database connections"
+          description: "Active DB connections: {{ $value }}. Pool might be exhausted soon."
+
+      # Timeout de conexiones
+      - alert: DatabaseConnectionTimeout
+        expr: hikaricp_connections_timeout_total > 0
+        for: 1m
+        labels:
+          severity: critical
+          category: database
+        annotations:
+          summary: "Database connection timeouts detected"
+          description: "{{ $value }} connection timeout(s) detected. Database might be overloaded."
+
+  # ============================================
+  # Alertas de JVM
+  # ============================================
+  - name: jvm_alerts
+    interval: 30s
+    rules:
+      # GC frecuente
+      - alert: FrequentGarbageCollection
+        expr: rate(jvm_gc_pause_seconds_count[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          category: jvm
+        annotations:
+          summary: "Frequent garbage collection on {{ $labels.instance }}"
+          description: "GC is running more than 10 times per second. Possible memory pressure."
+
+      # Tiempo de GC alto
+      - alert: HighGCTime
+        expr: rate(jvm_gc_pause_seconds_sum[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          category: jvm
+        annotations:
+          summary: "High GC time on {{ $labels.instance }}"
+          description: "Application is spending more than 10% of time in GC."
+
+  # ============================================
+  # Alertas de Disponibilidad
+  # ============================================
+  - name: availability_alerts
+    interval: 30s
+    rules:
+      # Health check fallando
+      - alert: HealthCheckFailing
+        expr: up{job="spring-boot-app"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          category: availability
+        annotations:
+          summary: "Spring Boot application health check failing"
+          description: "Application {{ $labels.instance }} is not responding to health checks."
+
+      # Actuator endpoint no disponible
+      - alert: ActuatorEndpointDown
+        expr: probe_success{job="spring-boot-actuator"} == 0
+        for: 2m
+        labels:
+          severity: warning
+          category: availability
+        annotations:
+          summary: "Actuator endpoint is down"
+          description: "Cannot reach actuator endpoints on {{ $labels.instance }}"
+  # ============================================
+  # Alertas de Prueba
+  # ============================================
+  - name: test_alerts
+    interval: 10s
+    rules:
+      - alert: TestAlert
+        expr: vector(1)  # Siempre verdadero
+        for: 30s
+        labels:
+          severity: warning
+          category: test
+        annotations:
+          summary: "This is a test alert"
+          description: "This alert is always firing for testing purposes. You can see it in Prometheus and Alertmanager."
+
+  # ============================================
+  # Alertas de Métricas Personalizadas - Autenticación
+  # ============================================
+  - name: custom_auth_alerts
+    interval: 15s
+    rules:
+      # Alta tasa de logins fallidos (posible ataque)
+      - alert: HighLoginFailureRate
+        expr: |
+          rate(auth_login_failure_total[1m]) * 60 > 5
+        for: 1m
+        labels:
+          severity: critical
+          category: authentication
+        annotations:
+          summary: "High rate of login failures detected"
+          description: "More than 5 login failures per minute. Possible brute force attack."
+
+      # Tasa de éxito de login muy baja
+      - alert: LowLoginSuccessRate
+        expr: |
+          (rate(auth_login_success_total[5m]) / (rate(auth_login_success_total[5m]) + rate(auth_login_failure_total[5m]))) < 0.5
+        for: 2m
+        labels:
+          severity: warning
+          category: authentication
+        annotations:
+          summary: "Login success rate below 50%"
+          description: "Less than 50% of login attempts are successful."
+
+      # Latencia alta en autenticación
+      - alert: HighAuthenticationLatency
+        expr: |
+          auth_login_duration_seconds_max > 3
+        for: 2m
+        labels:
+          severity: warning
+          category: performance
+        annotations:
+          summary: "High authentication latency"
+          description: "Login duration exceeded 3 seconds."
+
+  # ============================================
+  # Alertas de Métricas Personalizadas - JWT
+  # ============================================
+  - name: custom_jwt_alerts
+    interval: 15s
+    rules:
+      # Alta tasa de tokens inválidos
+      - alert: HighInvalidTokenRate
+        expr: |
+          rate(jwt_token_invalid_total[1m]) * 60 > 10
+        for: 1m
+        labels:
+          severity: warning
+          category: security
+        annotations:
+          summary: "High rate of invalid JWT tokens"
+          description: "More than 10 invalid tokens per minute. Possible token tampering."
+
+      # Alta tasa de tokens expirados
+      - alert: HighExpiredTokenRate
+        expr: |
+          rate(jwt_token_expired_total[1m]) * 60 > 20
+        for: 2m
+        labels:
+          severity: info
+          category: jwt
+        annotations:
+          summary: "High rate of expired tokens"
+          description: "More than 20 expired tokens per minute. Users may need to refresh more frequently."
+
+      # Tokens revocados (posible compromiso de seguridad)
+      - alert: TokensBeingRevoked
+        expr: |
+          rate(jwt_token_revoked_total[5m]) > 0
+        for: 1m
+        labels:
+          severity: warning
+          category: security
+        annotations:
+          summary: "JWT tokens are being revoked"
+          description: "Tokens are being revoked, which may indicate a security issue."
+
+  # ============================================
+  # Alertas de Métricas Personalizadas - Seguridad
+  # ============================================
+  - name: custom_security_alerts
+    interval: 15s
+    rules:
+      # Credenciales inválidas (ataque de fuerza bruta)
+      - alert: InvalidCredentialsAttack
+        expr: |
+          rate(security_credentials_invalid_total[1m]) * 60 > 5
+        for: 1m
+        labels:
+          severity: critical
+          category: security
+        annotations:
+          summary: "Multiple invalid credential attempts"
+          description: "More than 5 invalid credential attempts per minute. Possible brute force attack."
+
+      # Accesos no autorizados (401)
+      - alert: UnauthorizedAccessAttempts
+        expr: |
+          rate(security_access_unauthorized_total[1m]) * 60 > 10
+        for: 1m
+        labels:
+          severity: warning
+          category: security
+        annotations:
+          summary: "High rate of unauthorized access attempts"
+          description: "More than 10 unauthorized (401) attempts per minute."
+
+      # Accesos prohibidos (403)
+      - alert: ForbiddenAccessAttempts
+        expr: |
+          rate(security_access_forbidden_total[1m]) * 60 > 10
+        for: 1m
+        labels:
+          severity: warning
+          category: security
+        annotations:
+          summary: "High rate of forbidden access attempts"
+          description: "More than 10 forbidden (403) attempts per minute."

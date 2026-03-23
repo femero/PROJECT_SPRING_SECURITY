@@ -68,64 +68,76 @@ spring:
       ddl-auto: create-drop
     show-sql: true
     defer-datasource-initialization: true
+  application:
+    name: jwt-spring-security
 
-# Configuración de Logging para aplicación JWT
-logging:
-  level:
-    # Configuración para Hibernate/JPA
-    org:
-      hibernate:
-        SQL: DEBUG
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE  # Para ver los parámetros de las consultas SQL
-        stat: DEBUG  # Para estadísticas de Hibernate
-      springframework:
-        web: DEBUG
-        security: DEBUG  # Importante para debugging de autenticación JWT
-        transaction: DEBUG  # Para transacciones de base de datos
+# Configuración de SpringDoc OpenAPI
+springdoc:
+  show-actuator: true
+  use-management-port: false
 
-    # Configuración específica para tu aplicación
-    com:
-      programandoenjava:
-        jwt: DEBUG  # Paquete específico de tu aplicación JWT
+# Configuración de Distributed Tracing
+tracing:
+  enabled: true
 
-    # Configuración general
-    root: INFO
+# OpenTelemetry Configuration
+otel:
+  service:
+    name: jwt-spring-security
+  exporter:
+    otlp:
+      endpoint: http://localhost:4318
+      protocol: http/protobuf
+  traces:
+    sampler:
+      probability: 1.0
+  metrics:
+    exporter: none
+  logs:
+    exporter: none
 
-    # Configuración para librerías específicas
-    io:
-      jsonwebtoken: DEBUG  # Para debugging de JWT si usas jjwt
-
-    # Configuración de base de datos
-    org.springframework.jdbc.core: DEBUG  # Para ver queries SQL
-
-  # Patrón de logging mejorado
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId:-}/%X{spanId:-}] %-5level [%thread] %logger{36} - %msg%n"
-    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId:-}/%X{spanId:-}] %-5level [%thread] %logger{36} - %msg%n"
-
-  # Configuración de archivos de log
-  file:
-    name: logs/jwt-app.log
-    max-size: 10MB
-    max-history: 30
-
-  # Configuración adicional para Spring Boot
-  logback:
-    rollingpolicy:
-      max-file-size: 10MB
-      max-history: 30
-      total-size-cap: 1GB
-
-# Configuración adicional para el contexto de la aplicación
+# Configuración de Actuator+Métricas+Micrometer Tracing
+# Management endpoints con tracing
 management:
-  tracing:
-    sampling:
-      probability: 1.0  # Para trazabilidad completa en desarrollo
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,loggers
+        include: "*"
+      base-path: /actuator
+    enabled-by-default: true
+  endpoint:
+    health:
+      show-details: always
+      enabled: true
+    prometheus:
+      enabled: true
+    metrics:
+      enabled: true
+    info:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    enable:
+      jvm: true
+      process: true
+      system: true
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+    baggage:
+      enabled: true
+      correlation:
+        enabled: true
+      remote-fields:
+        - X-Trace-Id
+        - X-User-Id
+        - X-Request-Id
+  otlp:
+    tracing:
+      endpoint: http://localhost:4318/v1/traces
+  server:
+    add-application-context-header: false
 

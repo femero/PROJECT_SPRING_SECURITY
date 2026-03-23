@@ -1,0 +1,50 @@
+sequenceDiagram
+    autonumber
+    participant Client
+    participant Controller
+    participant InputValidationService
+    participant XSSPattern as XSS_PATTERN
+    participant Test as InputValidationServiceTest
+
+    rect rgb(255, 230, 230)
+        Note over Client,XSSPattern: 🔴 ATAQUE: XSS (Cross-Site Scripting)
+        
+        Client->>Controller: POST /api/v1/user/profile<br/>{"name": "<script>alert('XSS')</script>"}
+        Controller->>InputValidationService: validateInput(name, "name")
+        InputValidationService->>XSSPattern: containsXSS(name)
+        
+        Note over XSSPattern: Pattern: .*(<script|javascript:|<br/>onerror=|onload=|<iframe).*
+        XSSPattern->>XSSPattern: matcher("<script>alert('XSS')</script>")
+        XSSPattern-->>InputValidationService: true (DETECTED!)
+        
+        InputValidationService->>InputValidationService: log.error("XSS attempt detected")
+        InputValidationService-->>Controller: throw SecurityException
+        Controller-->>Client: 400 Bad Request
+    end
+
+    rect rgb(230, 255, 230)
+        Note over Test,XSSPattern: 🧪 TEST: shouldDetectXSS
+        
+        Test->>Test: @ParameterizedTest @ValueSource
+        
+        loop Payloads XSS
+            Note over Test: "<script>alert('XSS')</script>"<br/>"javascript:alert('XSS')"<br/>"<img onerror=alert('XSS')>"<br/>"<iframe src='malicious.com'>"
+            
+            Test->>InputValidationService: containsXSS(payload)
+            InputValidationService->>XSSPattern: matcher(payload).find()
+            XSSPattern-->>InputValidationService: true
+            InputValidationService-->>Test: true
+            Test->>Test: assertThat(result).isTrue() ✅
+        end
+    end
+
+    rect rgb(230, 255, 230)
+        Note over Test,XSSPattern: 🧪 TEST: shouldSanitizeDangerousCharacters
+        
+        Test->>InputValidationService: sanitizeInput("<script>alert('test')</script>")
+        InputValidationService->>InputValidationService: replace less-than with entity
+        InputValidationService->>InputValidationService: replace greater-than with entity
+        InputValidationService-->>Test: "&​lt&#59;script&​gt&#59;alert('test')&​lt&#59;/script&​gt&#59;"
+        Test->>Test: assertThat(sanitized).doesNotContain("<") ✅
+        Test->>Test: assertThat(sanitized).doesNotContain(">") ✅
+    end

@@ -31,3 +31,11 @@ build/
 
 ### VS Code ###
 .vscode/
+logs/jwt-app.log
+
+# Logs
+logs/
+*.log
+
+# ELK Data
+logstash/data/

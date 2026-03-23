@@ -2,6 +2,7 @@ package com.programandoenjava.jwt.config;
 
 import com.programandoenjava.jwt.auth.repository.TokenRepository;
 import com.programandoenjava.jwt.auth.service.JwtService;
+import com.programandoenjava.jwt.metrics.MetricsService;
 import com.programandoenjava.jwt.user.User;
 import com.programandoenjava.jwt.user.UserRepository;
 import jakarta.servlet.FilterChain;
@@ -35,6 +36,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
     private final TokenRepository tokenRepository;
     private final UserRepository userRepository;
+    // Agregar al inicio de la clase (después de las otras dependencias)
+    private final MetricsService metricsService;
 
     // Configuración de validación de claims desde application.yml
     @Value("${application.security.jwt.validation.required-claims.roles.values:}")
@@ -124,6 +127,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     log.warn ("Invalid refresh token JWT for user: {}", user.getEmail ());
                 }
             } else {
+                long startTime = System.currentTimeMillis ();
                 // LÓGICA NORMAL PARA ACCESS TOKENS
                 log.debug ("Processing regular access token");
 
@@ -143,18 +147,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     log.debug ("Access token JWT signature and expiration valid: {}", isJwtValid);
 
                     if (isJwtValid) {
+                        metricsService.incrementJwtValidated ();
+                        metricsService.recordJwtValidationDuration (System.currentTimeMillis () - startTime);
+
                         if (validateRequiredClaims (jwt)) {
                             log.debug ("✅ Todos los claims requeridos son válidos");
                             log.debug ("Authenticating user with access token: {}", user.getEmail ());
                             authenticateUser (request, userDetails);
                         } else {
-                            log.warn ("❌ Validación de claims requeridos falló - No se autenticará al usuario");
+                            log.warn ("❌ Validación de claims requeridos falló");
+                            metricsService.incrementJwtInvalid ();
                         }
                     } else {
                         log.warn ("JWT token signature/expiration invalid for user: {}", user.getEmail ());
+                        metricsService.incrementJwtInvalid ();
                     }
                 } else {
                     log.warn ("Access token is expired, revoked, or not found in database");
+                    metricsService.incrementJwtExpired ();
                 }
             }
 
@@ -199,7 +209,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * (NO incluye refresh-token que necesita procesar el JWT)
      */
     private boolean shouldSkipJwtFilterCompletely (String requestPath) {
-        return requestPath.contains ("/auth/register") || requestPath.contains ("/auth/login") || requestPath.contains ("/h2-console") || requestPath.startsWith ("/error") || requestPath.equals ("/") || requestPath.startsWith ("/public");
+        return requestPath.contains ("/auth/register") || requestPath.contains ("/auth/login") || requestPath.contains ("/h2-console") || requestPath.startsWith ("/error") || requestPath.equals ("/") || requestPath.startsWith ("/public") || requestPath.startsWith ("/actuator");
     }
 
     /**

@@ -1,0 +1,35 @@
+sequenceDiagram
+    autonumber
+    participant Admin
+    participant Grafana
+    participant Prometheus
+    participant Jaeger
+    participant Elasticsearch
+    participant Alertmanager
+
+    Note over Admin,Alertmanager: 🔧 CONFIGURACIÓN INICIAL
+
+    Admin->>Grafana: Acceder http://localhost:3000
+    Grafana-->>Admin: Login (admin/admin)
+    
+    Note over Admin,Grafana: 📊 Configurar Datasources
+    
+    Admin->>Grafana: Add Datasource: Prometheus
+    Grafana->>Prometheus: Test connection (GET /api/v1/query)
+    Prometheus-->>Grafana: ✅ Success
+    Note over Grafana: URL: http://prometheus:9090<br/>Scrape interval: 15s
+    
+    Admin->>Grafana: Add Datasource: Jaeger
+    Grafana->>Jaeger: Test connection (GET /api/services)
+    Jaeger-->>Grafana: ✅ Success
+    Note over Grafana: URL: http://jaeger:16686<br/>Enable trace to logs
+    
+    Admin->>Grafana: Add Datasource: Elasticsearch
+    Grafana->>Elasticsearch: Test connection (GET /_cluster/health)
+    Elasticsearch-->>Grafana: ✅ Success
+    Note over Grafana: URL: http://elasticsearch:9200<br/>Index: logs-*
+    
+    Admin->>Grafana: Add Datasource: Alertmanager
+    Grafana->>Alertmanager: Test connection (GET /api/v2/status)
+    Alertmanager-->>Grafana: ✅ Success
+    Note over Grafana: URL: http://alertmanager:9093

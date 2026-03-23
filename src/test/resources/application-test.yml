@@ -1,0 +1,37 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: false
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+  application:
+    name: jwt-spring-security-test
+
+application:
+  security:
+    jwt:
+      secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      expiration: 86400000
+      refresh-token:
+        expiration: 604800000
+
+management:
+  tracing:
+    enabled: false
+  otlp:
+    tracing:
+      endpoint: ""
+
+logging:
+  level:
+    com.programandoenjava.jwt: WARN
+    org.springframework: ERROR
+    org.springframework.security: WARN
