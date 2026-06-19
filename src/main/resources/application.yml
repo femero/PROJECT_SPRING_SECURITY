@@ -7,7 +7,7 @@ application:
       #secret-key: mi clave es muy segura 123456789 ABCabc
       secret-key: bWkgY2xhdmUgZXMgbXV5IHNlZ3VyYSAxMjM0NTY3ODkgQUJDYWJj
       #expiration: 86400000 # a day (1000 * 60 * 60 * 24)
-      expiration: 60000 # a day (1000 * 60)
+      expiration: 60000 # a min (1000 * 60)
       refresh-token:
         expiration: 604800000 # a week (1000 * 60 * 60 * 24 * 7)
       
