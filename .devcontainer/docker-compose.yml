@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  app:
+    image: mcr.microsoft.com/devcontainers/java:17
+    volumes:
+      - ../..:/workspaces:cached
+    command: sleep infinity
+    networks:
+      - observability
+ 
+networks:
+  observability:
+    external: false

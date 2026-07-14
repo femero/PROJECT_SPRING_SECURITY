@@ -1,0 +1,24 @@
+{
+  "name": "jwt-gateway-observability",
+  "dockerComposeFile": [
+    "../docker-compose.yml",
+    "docker-compose.yml"
+  ],
+  "service": "app",
+  "workspaceFolder": "/workspaces/PROJECT_SPRING_SECURITY",
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "17"
+    }
+  },
+  "forwardPorts": [8080, 9200, 5601, 9090, 3000, 16686, 9093],
+  "portsAttributes": {
+    "9200": { "label": "Elasticsearch" },
+    "5601": { "label": "Kibana" },
+    "9090": { "label": "Prometheus" },
+    "3000": { "label": "Grafana" },
+    "16686": { "label": "Jaeger UI" },
+    "9093": { "label": "Alertmanager" }
+  },
+  "postCreateCommand": "mvn dependency:go-offline"
+}
