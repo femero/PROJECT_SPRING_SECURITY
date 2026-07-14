@@ -14,7 +14,8 @@
       "version": "latest"
     },
     "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
-      "version": "latest"
+      "version": "latest",
+      "moby": false
     }
   },
   "forwardPorts": [8080, 9200, 5601, 9090, 3000, 16686, 9093],
