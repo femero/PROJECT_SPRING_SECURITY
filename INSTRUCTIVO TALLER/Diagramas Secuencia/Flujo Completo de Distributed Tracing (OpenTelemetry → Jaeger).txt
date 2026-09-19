@@ -1,0 +1,78 @@
+sequenceDiagram
+    autonumber
+    participant Client
+    participant TraceIdFilter
+    participant Tracer
+    participant MDC
+    participant JwtAuthFilter
+    participant Controller
+    participant Service
+    participant TracingCustomizer
+    participant OTLPExporter
+    participant Jaeger
+
+    Note over Client,Jaeger: 🔍 INICIO DEL TRACE
+
+    Client->>TraceIdFilter: HTTP Request<br/>GET /api/v1/admin/dashboard
+    
+    Note over TraceIdFilter: @Order(1) - Primer filtro en ejecutarse
+    
+    TraceIdFilter->>TraceIdFilter: Verificar si es /actuator (skip)
+    
+    TraceIdFilter->>Tracer: currentSpan()
+    Tracer-->>TraceIdFilter: Span (auto-creado por Micrometer)
+    
+    Note over TraceIdFilter: Extraer IDs del contexto
+    TraceIdFilter->>TraceIdFilter: traceId = span.context().traceId()
+    TraceIdFilter->>TraceIdFilter: spanId = span.context().spanId()
+    
+    Note over TraceIdFilter,MDC: 📝 Propagar a logs (MDC)
+    TraceIdFilter->>MDC: put("traceId", traceId)
+    TraceIdFilter->>MDC: put("spanId", spanId)
+    
+    Note over TraceIdFilter: 📤 Headers de respuesta
+    TraceIdFilter->>TraceIdFilter: response.setHeader("X-Trace-Id", traceId)
+    TraceIdFilter->>TraceIdFilter: response.setHeader("X-Span-Id", spanId)
+    
+    Note over TraceIdFilter: 🏷️ Tags del span
+    TraceIdFilter->>Tracer: currentSpan.tag("http.method", "GET")
+    TraceIdFilter->>Tracer: currentSpan.tag("http.path", "/api/v1/admin/dashboard")
+    TraceIdFilter->>Tracer: currentSpan.tag("http.url", fullUrl)
+    
+    TraceIdFilter->>JwtAuthFilter: chain.doFilter()
+    
+    Note over JwtAuthFilter: 🔐 SPAN: JWT Validation
+    JwtAuthFilter->>Tracer: (auto-instrumented span)
+    JwtAuthFilter->>Controller: authenticated request
+    
+    Note over Controller: 🎯 SPAN: Controller Method
+    Controller->>Service: business logic
+    
+    Note over Service: 📊 SPAN: Service Method
+    Service->>TracingCustomizer: addTag("user.id", userId)
+    TracingCustomizer->>Tracer: currentSpan.tag("user.id", userId)
+    
+    Service->>TracingCustomizer: addEvent("user.authenticated")
+    TracingCustomizer->>Tracer: currentSpan.event("user.authenticated")
+    
+    Service-->>Controller: response data
+    Controller-->>JwtAuthFilter: ResponseEntity
+    JwtAuthFilter-->>TraceIdFilter: response
+    
+    Note over TraceIdFilter: 📊 Tag final con status
+    TraceIdFilter->>Tracer: currentSpan.tag("http.status_code", "200")
+    
+    Note over TraceIdFilter,MDC: 🧹 Limpiar MDC
+    TraceIdFilter->>MDC: remove("traceId")
+    TraceIdFilter->>MDC: remove("spanId")
+    
+    TraceIdFilter-->>Client: HTTP Response<br/>X-Trace-Id: abc123<br/>X-Span-Id: def456
+    
+    Note over Tracer,Jaeger: 📡 EXPORTACIÓN ASÍNCRONA
+    
+    Tracer->>OTLPExporter: Batch spans (async)
+    Note over OTLPExporter: Endpoint: http://localhost:4318/v1/traces<br/>Protocol: OTLP HTTP/Protobuf
+    OTLPExporter->>Jaeger: POST /v1/traces
+    Jaeger->>Jaeger: Store & Index trace
+    
+    Note over Jaeger: 🖥️ UI disponible en http://localhost:16686

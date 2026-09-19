@@ -1,0 +1,48 @@
+sequenceDiagram
+    autonumber
+    participant SpringBoot
+    participant Logback
+    participant MDC
+    participant TCPAppender
+    participant Logstash
+    participant Filter
+    participant Elasticsearch
+
+    Note over SpringBoot,Elasticsearch: 📝 GENERACIÓN Y ENVÍO DE LOGS
+
+    SpringBoot->>SpringBoot: log.info("User authenticated: {}", email)
+    
+    SpringBoot->>MDC: Obtener contexto
+    Note over MDC: traceId: "abc-123"<br/>spanId: "span-001"<br/>userId: "user-42"
+    
+    SpringBoot->>Logback: LogEvent con MDC
+    Note over Logback: Formato JSON estructurado
+    
+    Logback->>TCPAppender: Enviar log
+    Note over TCPAppender: TCP Socket a localhost:5000
+    
+    TCPAppender->>Logstash: JSON log event
+    Note over Logstash: Input: tcp port 5000<br/>codec: json_lines
+    
+    Note over Logstash,Filter: 🔧 PROCESAMIENTO
+    
+    Logstash->>Filter: Aplicar filtros
+    
+    Filter->>Filter: if [traceId] exists
+    Filter->>Filter: add_field "trace_id" = traceId
+    
+    Filter->>Filter: if [level] exists
+    Filter->>Filter: add_field "log_level" = level
+    
+    Filter->>Filter: remove_field "@version"
+    
+    Note over Filter,Elasticsearch: 📤 OUTPUT
+    
+    Filter->>Elasticsearch: Index document
+    Note over Elasticsearch: Index: spring-boot-logs-2026.03.21<br/>Type: _doc
+    
+    Filter->>Filter: stdout (debug)
+    Note over Filter: rubydebug codec para consola
+    
+    Elasticsearch->>Elasticsearch: Store & Index
+    Note over Elasticsearch: Documento indexado y searchable

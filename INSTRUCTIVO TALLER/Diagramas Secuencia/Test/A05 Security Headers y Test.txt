@@ -1,0 +1,74 @@
+sequenceDiagram
+    autonumber
+    participant Client
+    participant SecurityFilterChain
+    participant HeadersConfigurer
+    participant Response
+    participant Test as SecurityHeadersTest
+    participant MockMvc
+
+    rect rgb(230, 230, 255)
+        Note over Client,Response: 🛡️ SECURITY HEADERS APPLIED
+        
+        Client->>SecurityFilterChain: GET /actuator/health
+        
+        SecurityFilterChain->>HeadersConfigurer: Apply headers configuration
+        
+        HeadersConfigurer->>Response: X-Frame-Options: DENY
+        Note over Response: 🛡️ Previene Clickjacking
+        
+        HeadersConfigurer->>Response: X-XSS-Protection: 1&#59; mode=block
+        Note over Response: 🛡️ Protección XSS del navegador
+        
+        HeadersConfigurer->>Response: Strict-Transport-Security: max-age=31536000
+        Note over Response: 🔒 Fuerza HTTPS por 1 año
+        
+        HeadersConfigurer->>Response: Content-Security-Policy: default-src 'self'
+        Note over Response: 🛡️ Previene carga de recursos externos
+        
+        HeadersConfigurer->>Response: Referrer-Policy: strict-origin-when-cross-origin
+        Note over Response: 🔐 Control de información de referrer
+        
+        HeadersConfigurer->>Response: Permissions-Policy: geolocation=(), camera=()
+        Note over Response: 🔒 Deshabilita APIs sensibles
+        
+        SecurityFilterChain-->>Client: 200 OK + Security Headers
+    end
+
+    rect rgb(230, 255, 230)
+        Note over Test,MockMvc: 🧪 TEST: shouldIncludeXFrameOptions
+        
+        Test->>MockMvc: perform(get("/actuator/health"))
+        MockMvc->>SecurityFilterChain: Execute request
+        SecurityFilterChain-->>MockMvc: Response with headers
+        
+        Test->>Test: andExpect(header().string("X-Frame-Options", "DENY"))
+    end
+
+    rect rgb(230, 255, 230)
+        Note over Test,MockMvc: 🧪 TEST: shouldIncludeXXSSProtection
+        
+        Test->>MockMvc: perform(get("/actuator/health"))
+        Test->>Test: andExpect(header().string("X-XSS-Protection", "1&#59; mode=block"))
+    end
+
+    rect rgb(230, 255, 230)
+        Note over Test,MockMvc: 🧪 TEST: shouldIncludeCSP
+        
+        Test->>MockMvc: perform(get("/actuator/health"))
+        Test->>Test: andExpect(header().exists("Content-Security-Policy"))
+    end
+
+    rect rgb(230, 255, 230)
+        Note over Test,MockMvc: 🧪 TEST: shouldIncludeReferrerPolicy
+        
+        Test->>MockMvc: perform(get("/actuator/health"))
+        Test->>Test: andExpect(header().exists("Referrer-Policy"))
+    end
+
+    rect rgb(230, 255, 230)
+        Note over Test,MockMvc: 🧪 TEST: shouldIncludePermissionsPolicy
+        
+        Test->>MockMvc: perform(get("/actuator/health"))
+        Test->>Test: andExpect(header().exists("Permissions-Policy"))
+    end

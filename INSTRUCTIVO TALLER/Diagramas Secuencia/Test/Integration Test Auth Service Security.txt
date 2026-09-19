@@ -1,0 +1,110 @@
+sequenceDiagram
+    autonumber
+    participant Test as AuthServiceSecurityIntegrationTest
+    participant AuthService
+    participant InputValidationService
+    participant LoginAttemptService
+    participant UserRepository
+    participant Database
+
+    rect rgb(230, 230, 255)
+        Note over Test,Database: 🔧 @BeforeEach setUp()
+        
+        Test->>LoginAttemptService: resetAttempts(TEST_EMAIL)
+        Test->>UserRepository: findByEmail(TEST_EMAIL)
+        UserRepository-->>Test: Optional<User>
+        Test->>UserRepository: delete(existingUser)
+        
+        Test->>AuthService: register(RegisterRequest)
+        AuthService->>UserRepository: save(newUser)
+        UserRepository->>Database: INSERT INTO _user
+        Database-->>Test: User created
+    end
+
+    rect rgb(230, 255, 230)
+        Note over Test,Database: 🧪 TEST: shouldRejectInvalidEmailFormat
+        
+        Test->>AuthService: authenticate(invalid-email, password)
+        AuthService->>InputValidationService: isValidEmail(invalid-email)
+        InputValidationService-->>AuthService: false
+        AuthService-->>Test: throw IllegalArgumentException(Invalid email format)
+        
+        Test->>Test: assertThatThrownBy()<br/>.hasMessageContaining(Invalid email format) ✅
+    end
+
+    rect rgb(230, 255, 230)
+        Note over Test,Database: 🧪 TEST: shouldDetectSQLInjectionInEmail
+        
+        Test->>AuthService: authenticate(DROP TABLE attack, password)
+        AuthService->>InputValidationService: validateInput(email, email type)
+        InputValidationService->>InputValidationService: containsSQLInjection(email)
+        InputValidationService-->>AuthService: throw SecurityException
+        
+        Test->>Test: assertThatThrownBy()<br/>.hasMessageContaining(Invalid input detected) ✅
+    end
+
+    rect rgb(230, 255, 230)
+        Note over Test,Database: 🧪 TEST: shouldBlockAccountAfterMaxFailedAttempts
+        
+        loop 5 intentos con password incorrecto
+            Test->>AuthService: authenticate(TEST_EMAIL, wrongpassword)
+            AuthService->>LoginAttemptService: loginFailed(TEST_EMAIL)
+            AuthService-->>Test: catch Exception
+        end
+        
+        Test->>LoginAttemptService: isBlocked(TEST_EMAIL)
+        LoginAttemptService-->>Test: true
+        Test->>Test: assertThat(isBlocked).isTrue() ✅
+        
+        Test->>AuthService: authenticate(TEST_EMAIL, CORRECT_PASSWORD)
+        AuthService->>LoginAttemptService: isBlocked(TEST_EMAIL)
+        LoginAttemptService-->>AuthService: true
+        AuthService-->>Test: throw SecurityException(temporarily locked)
+        
+        Test->>Test: assertThatThrownBy()<br/>.hasMessageContaining(temporarily locked) ✅
+    end
+
+    rect rgb(230, 255, 230)
+        Note over Test,Database: 🧪 TEST: shouldResetAttemptsAfterSuccessfulLogin
+        
+        loop 3 intentos fallidos
+            Test->>AuthService: authenticate(TEST_EMAIL, wrong)
+            AuthService-->>Test: catch Exception
+        end
+        
+        Test->>LoginAttemptService: getAttempts(TEST_EMAIL)
+        LoginAttemptService-->>Test: 3
+        Test->>Test: assertThat(attempts).isEqualTo(3) ✅
+        
+        Test->>AuthService: authenticate(TEST_EMAIL, CORRECT_PASSWORD)
+        AuthService->>LoginAttemptService: loginSucceeded(TEST_EMAIL)
+        
+        Test->>LoginAttemptService: getAttempts(TEST_EMAIL)
+        LoginAttemptService-->>Test: 0
+        Test->>Test: assertThat(attempts).isEqualTo(0) ✅
+    end
+
+    rect rgb(230, 255, 230)
+        Note over Test,Database: 🧪 TEST: shouldTrackFailedAttemptsIndependently
+        
+        Test->>AuthService: register(user2)
+        
+        loop 4 intentos user1
+            Test->>AuthService: authenticate(TEST_EMAIL, wrong)
+        end
+        
+        loop 2 intentos user2
+            Test->>AuthService: authenticate(email2, wrong)
+        end
+        
+        Test->>LoginAttemptService: getAttempts(TEST_EMAIL)
+        LoginAttemptService-->>Test: 4
+        
+        Test->>LoginAttemptService: getAttempts(email2)
+        LoginAttemptService-->>Test: 2
+        
+        Test->>Test: assertThat(attempts1).isEqualTo(4) ✅
+        Test->>Test: assertThat(attempts2).isEqualTo(2) ✅
+        Test->>Test: assertThat(isBlocked1).isFalse() ✅
+        Test->>Test: assertThat(isBlocked2).isFalse() ✅
+    end

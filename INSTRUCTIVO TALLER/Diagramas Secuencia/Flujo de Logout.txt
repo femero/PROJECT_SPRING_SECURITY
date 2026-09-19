@@ -1,0 +1,24 @@
+sequenceDiagram
+    autonumber
+    participant Client
+    participant SecurityConfig
+    participant TokenRepository
+    participant SecurityContextHolder
+
+    Client->>SecurityConfig: POST /auth/logout<br/>Authorization: Bearer {token}
+    
+    SecurityConfig->>SecurityConfig: logout(request, response, auth)
+    SecurityConfig->>SecurityConfig: extractToken(authHeader)
+    
+    SecurityConfig->>TokenRepository: findByToken(jwt)
+    TokenRepository-->>SecurityConfig: Token
+    
+    alt Token encontrado
+        SecurityConfig->>TokenRepository: setIsExpired(true)
+        SecurityConfig->>TokenRepository: setIsRevoked(true)
+        SecurityConfig->>TokenRepository: save(token)
+        SecurityConfig->>SecurityContextHolder: clearContext()
+        SecurityConfig-->>Client: 200 OK (Logout successful)
+    else Token no encontrado
+        SecurityConfig-->>Client: 200 OK (No action needed)
+    end

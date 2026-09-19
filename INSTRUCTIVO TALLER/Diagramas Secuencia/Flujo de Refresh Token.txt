@@ -1,0 +1,60 @@
+sequenceDiagram
+    autonumber
+    participant Client
+    participant JwtAuthenticationFilter
+    participant AuthController
+    participant AuthService
+    participant JwtService
+    participant TokenRepository
+    participant UserRepository
+    participant MetricsService
+
+    Client->>JwtAuthenticationFilter: POST /api/v1/auth/refresh-token<br/>Authorization: Bearer {refreshToken}
+    
+    Note over JwtAuthenticationFilter: isRefreshTokenEndpoint = true
+    
+    JwtAuthenticationFilter->>JwtService: extractUsername(refreshToken)
+    JwtService-->>JwtAuthenticationFilter: "user-{id}"
+    
+    JwtAuthenticationFilter->>UserRepository: findById(userId)
+    UserRepository-->>JwtAuthenticationFilter: User
+    
+    JwtAuthenticationFilter->>JwtService: isTokenValid(refreshToken, user)
+    JwtService-->>JwtAuthenticationFilter: true
+    
+    JwtAuthenticationFilter->>JwtAuthenticationFilter: authenticateUser(request, user)
+    JwtAuthenticationFilter->>AuthController: doFilter()
+    
+    AuthController->>AuthService: refreshToken(authHeader)
+    
+    AuthService->>JwtService: extractUsername(oldRefreshToken)
+    AuthService->>UserRepository: findById(userId)
+    
+    AuthService->>JwtService: isTokenValid(oldRefreshToken, user)
+    
+    AuthService->>TokenRepository: findByToken(oldRefreshToken)
+    TokenRepository-->>AuthService: storedToken
+    
+    alt Token revocado o expirado
+        AuthService->>MetricsService: incrementJwtRevoked()
+        AuthService-->>AuthController: throw IllegalArgumentException
+        AuthController-->>Client: 401 Unauthorized
+    else Token válido
+        AuthService->>MetricsService: incrementRefreshTokenUsed()
+        
+        AuthService->>JwtService: generateToken(user)
+        JwtService-->>AuthService: newAccessToken
+        AuthService->>MetricsService: incrementJwtGenerated()
+        
+        AuthService->>JwtService: generateRefreshToken(user)
+        JwtService-->>AuthService: newRefreshToken
+        AuthService->>MetricsService: incrementRefreshTokenGenerated()
+        
+        AuthService->>TokenRepository: revokeOldRefreshToken()
+        AuthService->>TokenRepository: revokeAllUserAccessTokens()
+        AuthService->>TokenRepository: save(newAccessToken)
+        AuthService->>TokenRepository: save(newRefreshToken)
+        
+        AuthService-->>AuthController: TokenResponse
+        AuthController-->>Client: 200 OK {newAccessToken, newRefreshToken}
+    end

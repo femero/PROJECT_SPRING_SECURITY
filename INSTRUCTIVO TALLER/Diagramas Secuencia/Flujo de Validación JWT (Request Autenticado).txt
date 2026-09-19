@@ -1,0 +1,52 @@
+sequenceDiagram
+    autonumber
+    participant Client
+    participant JwtAuthenticationFilter
+    participant JwtService
+    participant TokenRepository
+    participant UserRepository
+    participant SecurityContext
+    participant MetricsService
+    participant Controller
+
+    Client->>JwtAuthenticationFilter: GET /api/v1/admin/dashboard<br/>Authorization: Bearer {token}
+    
+    JwtAuthenticationFilter->>JwtAuthenticationFilter: shouldSkipJwtFilterCompletely(path)
+    Note over JwtAuthenticationFilter: Path no es público, continúa
+    
+    JwtAuthenticationFilter->>JwtAuthenticationFilter: extractToken(authHeader)
+    
+    JwtAuthenticationFilter->>JwtService: extractUsername(token)
+    JwtService-->>JwtAuthenticationFilter: "user-{id}"
+    
+    JwtAuthenticationFilter->>JwtAuthenticationFilter: extractUserIdFromSubject("user-{id}")
+    
+    JwtAuthenticationFilter->>UserRepository: findById(userId)
+    UserRepository-->>JwtAuthenticationFilter: User
+    
+    JwtAuthenticationFilter->>TokenRepository: findByToken(jwt)
+    TokenRepository-->>JwtAuthenticationFilter: Token
+    
+    alt Token revocado o expirado en DB
+        JwtAuthenticationFilter->>MetricsService: incrementJwtExpired()
+        JwtAuthenticationFilter-->>Client: 401 Unauthorized
+    else Token válido en DB
+        JwtAuthenticationFilter->>JwtService: isTokenValid(token, user)
+        
+        alt Firma o expiración inválida
+            JwtService-->>JwtAuthenticationFilter: false
+            JwtAuthenticationFilter->>MetricsService: incrementJwtInvalid()
+            JwtAuthenticationFilter-->>Client: 401 Unauthorized
+        else Token JWT válido
+            JwtService-->>JwtAuthenticationFilter: true
+            JwtAuthenticationFilter->>MetricsService: incrementJwtValidated()
+            
+            JwtAuthenticationFilter->>JwtAuthenticationFilter: validateRequiredClaims(jwt)
+            JwtAuthenticationFilter->>JwtService: validateRoles(jwt, requiredRoles)
+            JwtAuthenticationFilter->>JwtService: validateScopes(jwt, requiredScopes)
+            
+            JwtAuthenticationFilter->>SecurityContext: setAuthentication(authToken)
+            JwtAuthenticationFilter->>Controller: doFilter(request, response)
+            Controller-->>Client: 200 OK {response}
+        end
+    end

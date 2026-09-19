@@ -1,0 +1,42 @@
+sequenceDiagram
+    autonumber
+    participant Client
+    participant AuthController
+    participant AuthService
+    participant InputValidationService
+    participant SQLPattern as SQL_INJECTION_PATTERN
+    participant Test as InputValidationServiceTest
+
+    rect rgb(255, 230, 230)
+        Note over Client,SQLPattern: 🔴 ATAQUE: SQL INJECTION
+        
+        Client->>AuthController: POST /api/v1/auth/login<br/>{"email": "'&#59; DROP TABLE users&#59; --", "password": "123"}
+        AuthController->>AuthService: authenticate(request)
+        AuthService->>InputValidationService: validateInput(email, "email")
+        InputValidationService->>SQLPattern: containsSQLInjection(email)
+        
+        Note over SQLPattern: Pattern: .*(union|select|insert|<br/>update|delete|drop|--|&#59;).*
+        SQLPattern->>SQLPattern: matcher("'&#59; DROP TABLE users&#59; --")
+        SQLPattern-->>InputValidationService: true (DETECTED!)
+        
+        InputValidationService->>InputValidationService: log.error("SQL Injection attempt detected")
+        InputValidationService-->>AuthService: throw SecurityException("Invalid input detected")
+        AuthService-->>AuthController: SecurityException
+        AuthController-->>Client: 400 Bad Request<br/>{"error": "Invalid input detected in email"}
+    end
+
+    rect rgb(230, 255, 230)
+        Note over Test,SQLPattern: 🧪 TEST: shouldDetectSQLInjection
+        
+        Test->>Test: @ParameterizedTest @ValueSource
+        
+        loop Payloads maliciosos
+            Note over Test: "'&#59; DROP TABLE users&#59; --"<br/>"1' OR '1'='1"<br/>"' UNION SELECT * FROM users--"
+            
+            Test->>InputValidationService: containsSQLInjection(payload)
+            InputValidationService->>SQLPattern: matcher(payload).find()
+            SQLPattern-->>InputValidationService: true
+            InputValidationService-->>Test: true
+            Test->>Test: assertThat(result).isTrue() ✅
+        end
+    end

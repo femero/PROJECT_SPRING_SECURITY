@@ -1,0 +1,38 @@
+sequenceDiagram
+    autonumber
+    participant SpringBootApp
+    participant MetricsService
+    participant Actuator
+    participant Prometheus
+    participant AlertRules
+    participant Alertmanager
+    participant Webhook
+
+    Note over SpringBootApp: Evento de negocio ocurre
+    
+    SpringBootApp->>MetricsService: incrementLoginFailure()
+    MetricsService->>MetricsService: loginFailureCounter.increment()
+    
+    loop Cada 15s (scrape interval)
+        Prometheus->>Actuator: GET /actuator/prometheus
+        Actuator-->>Prometheus: metrics (auth.login.failure_total=10)
+        Prometheus->>Prometheus: store time-series data
+    end
+    
+    loop Cada 15s (evaluation interval)
+        Prometheus->>AlertRules: evaluate HighLoginFailureRate
+        Note over AlertRules: rate(auth_login_failure_total[1m]) * 60 > 5
+        
+        alt Condición verdadera por 1m (for: 1m)
+            AlertRules-->>Prometheus: Alert FIRING
+            Prometheus->>Alertmanager: POST /api/v1/alerts
+            
+            Alertmanager->>Alertmanager: group_wait: 10s
+            Alertmanager->>Alertmanager: group_by: [alertname, severity]
+            
+            Alertmanager->>Webhook: POST webhook.site/...
+            Note over Webhook: {alertname: "HighLoginFailureRate",<br/>severity: "critical", status: "firing"}
+        else Condición falsa
+            AlertRules-->>Prometheus: No alert
+        end
+    end

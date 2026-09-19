@@ -1,0 +1,89 @@
+sequenceDiagram
+    autonumber
+    participant Client
+    participant AuthController
+    participant AuthService
+    participant LoginAttemptService
+    participant AttemptsCache as attemptsCache<br/>(ConcurrentHashMap)
+    participant LockoutCache as lockoutCache<br/>(ConcurrentHashMap)
+    participant MetricsService
+    participant Test as LoginAttemptServiceTest
+
+    rect rgb(255, 230, 230)
+        Note over Client,MetricsService: 🔴 ATAQUE: BRUTE FORCE (5 intentos fallidos)
+        
+        loop Intentos 1-4
+            Client->>AuthController: POST /api/v1/auth/login (wrong password)
+            AuthController->>AuthService: authenticate(request)
+            AuthService->>LoginAttemptService: isBlocked(email)
+            LoginAttemptService->>LockoutCache: get(email)
+            LockoutCache-->>LoginAttemptService: null (not locked)
+            LoginAttemptService-->>AuthService: false
+            
+            AuthService->>AuthService: authenticationManager.authenticate()
+            Note over AuthService: ❌ BadCredentialsException
+            
+            AuthService->>LoginAttemptService: loginFailed(email)
+            LoginAttemptService->>AttemptsCache: attempts++ 
+            Note over AttemptsCache: 1 → 2 → 3 → 4
+            
+            AuthService-->>Client: 401 Invalid credentials
+        end
+        
+        Client->>AuthController: POST /api/v1/auth/login (5th attempt)
+        AuthController->>AuthService: authenticate(request)
+        AuthService->>LoginAttemptService: isBlocked(email)
+        LoginAttemptService-->>AuthService: false
+        
+        AuthService->>AuthService: authenticationManager.authenticate()
+        Note over AuthService: ❌ BadCredentialsException
+        
+        AuthService->>LoginAttemptService: loginFailed(email)
+        LoginAttemptService->>AttemptsCache: attempts = 5
+        
+        Note over LoginAttemptService: attempts >= MAX_ATTEMPTS (5)
+        LoginAttemptService->>LockoutCache: put(email, now + 15min)
+        LoginAttemptService->>MetricsService: incrementAccountLockout()
+        
+        AuthService-->>Client: 401 Invalid credentials
+        
+        Note over Client,MetricsService: ⏰ Próximos 15 minutos - CUENTA BLOQUEADA
+        
+        Client->>AuthController: POST /api/v1/auth/login (correct password)
+        AuthController->>AuthService: authenticate(request)
+        AuthService->>LoginAttemptService: isBlocked(email)
+        LoginAttemptService->>LockoutCache: get(email)
+        LockoutCache-->>LoginAttemptService: lockoutTime (future)
+        LoginAttemptService-->>AuthService: true (BLOCKED!)
+        
+        AuthService-->>AuthController: throw SecurityException("Account temporarily locked")
+        AuthController-->>Client: 403 Forbidden<br/>{"error": "Account temporarily locked"}
+    end
+
+    rect rgb(230, 255, 230)
+        Note over Test,MetricsService: 🧪 TEST: shouldBlockAccountAfterMaxFailedAttempts
+        
+        Test->>Test: @Test @DisplayName
+        
+        loop 5 intentos
+            Test->>LoginAttemptService: loginFailed("blocked@example.com")
+        end
+        
+        Test->>LoginAttemptService: isBlocked("blocked@example.com")
+        LoginAttemptService-->>Test: true
+        Test->>Test: assertThat(isBlocked).isTrue() ✅
+        Test->>Test: verify(metricsService).incrementAccountLockout() ✅
+    end
+
+    rect rgb(230, 255, 230)
+        Note over Test,MetricsService: 🧪 TEST: shouldResetAttemptsAfterSuccessfulLogin
+        
+        Test->>LoginAttemptService: loginFailed(email) x3
+        Test->>LoginAttemptService: loginSucceeded(email)
+        LoginAttemptService->>AttemptsCache: remove(email)
+        LoginAttemptService->>LockoutCache: remove(email)
+        
+        Test->>LoginAttemptService: getAttempts(email)
+        LoginAttemptService-->>Test: 0
+        Test->>Test: assertThat(attempts).isEqualTo(0) ✅
+    end

@@ -1,0 +1,66 @@
+sequenceDiagram
+    autonumber
+    participant Client
+    participant RateLimitFilter
+    participant RateLimitService
+    participant BucketCache as cache<br/>(ConcurrentHashMap)
+    participant Bucket as Bucket4j
+    participant Test as RateLimitServiceTest
+
+    rect rgb(255, 230, 230)
+        Note over Client,Bucket: 🔴 ATAQUE: RATE LIMIT EXCEEDED
+        
+        loop 5 requests (dentro del límite)
+            Client->>RateLimitFilter: POST /api/v1/auth/login
+            RateLimitFilter->>RateLimitService: resolveLoginBucket(clientIP)
+            RateLimitService->>BucketCache: computeIfAbsent(IP, createBucket)
+            BucketCache-->>RateLimitService: Bucket
+            
+            RateLimitService->>Bucket: tryConsume(1)
+            Note over Bucket: tokens: 5→4→3→2→1→0
+            Bucket-->>RateLimitService: true
+            RateLimitService-->>RateLimitFilter: true (allowed)
+            RateLimitFilter->>RateLimitFilter: chain.doFilter()
+        end
+        
+        Client->>RateLimitFilter: POST /api/v1/auth/login (6th request)
+        RateLimitFilter->>RateLimitService: resolveLoginBucket(clientIP)
+        RateLimitService->>BucketCache: get(IP)
+        BucketCache-->>RateLimitService: Bucket (exhausted)
+        
+        RateLimitService->>Bucket: tryConsume(1)
+        Note over Bucket: tokens = 0
+        Bucket-->>RateLimitService: false
+        RateLimitService-->>RateLimitFilter: false (BLOCKED!)
+        
+        RateLimitFilter-->>Client: 429 Too Many Requests<br/>{"error": "Rate limit exceeded. Try again later."}
+    end
+
+    rect rgb(230, 255, 230)
+        Note over Test,Bucket: 🧪 TEST: shouldBlockRequestsExceedingLimit
+        
+        Test->>Test: @Test @DisplayName
+        
+        loop 5 requests
+            Test->>RateLimitService: tryConsume("test-ip", 1)
+            RateLimitService-->>Test: true
+        end
+        
+        Test->>RateLimitService: tryConsume("test-ip", 1)
+        RateLimitService-->>Test: false
+        Test->>Test: assertThat(consumed).isFalse() ✅
+    end
+
+    rect rgb(230, 255, 230)
+        Note over Test,Bucket: 🧪 TEST: shouldCreateSeparateBucketsForDifferentIPs
+        
+        loop 5 requests IP1
+            Test->>RateLimitService: tryConsume("192.168.1.1", 1)
+        end
+        Note over RateLimitService: IP1 bucket exhausted
+        
+        Test->>RateLimitService: tryConsume("192.168.1.2", 1)
+        RateLimitService->>BucketCache: Nuevo bucket para IP2
+        RateLimitService-->>Test: true (fresh bucket)
+        Test->>Test: assertThat(consumed).isTrue() ✅
+    end

@@ -1,0 +1,63 @@
+sequenceDiagram
+    autonumber
+    participant Client
+    participant AuthController
+    participant AuthService
+    participant InputValidationService
+    participant LoginAttemptService
+    participant AuthenticationManager
+    participant UserRepository
+    participant JwtService
+    participant TokenRepository
+    participant MetricsService
+
+    Client->>AuthController: POST /api/v1/auth/login
+    AuthController->>AuthService: authenticate(AuthRequest)
+    AuthService->>MetricsService: startTimer()
+    
+    AuthService->>InputValidationService: validateInput(email)
+    AuthService->>InputValidationService: isValidEmail(email)
+    
+    AuthService->>LoginAttemptService: isBlocked(email)
+    alt Cuenta bloqueada
+        LoginAttemptService-->>AuthService: true
+        AuthService->>MetricsService: incrementLoginFailure()
+        AuthService-->>AuthController: throw SecurityException
+        AuthController-->>Client: 403 Account Locked
+    else Cuenta no bloqueada
+        LoginAttemptService-->>AuthService: false
+        
+        AuthService->>AuthenticationManager: authenticate(credentials)
+        alt Credenciales inválidas
+            AuthenticationManager-->>AuthService: throw AuthenticationException
+            AuthService->>LoginAttemptService: loginFailed(email)
+            AuthService->>MetricsService: incrementLoginFailure()
+            AuthService->>MetricsService: incrementInvalidCredentials()
+            AuthService-->>AuthController: throw IllegalArgumentException
+            AuthController-->>Client: 401 Unauthorized
+        else Credenciales válidas
+            AuthenticationManager-->>AuthService: Authentication
+            
+            AuthService->>UserRepository: findByEmail(email)
+            UserRepository-->>AuthService: User
+            
+            AuthService->>JwtService: generateToken(user)
+            JwtService-->>AuthService: accessToken
+            AuthService->>MetricsService: incrementJwtGenerated()
+            
+            AuthService->>JwtService: generateRefreshToken(user)
+            JwtService-->>AuthService: refreshToken
+            AuthService->>MetricsService: incrementRefreshTokenGenerated()
+            
+            AuthService->>TokenRepository: revokeAllUserTokens(user)
+            AuthService->>TokenRepository: save(accessToken)
+            AuthService->>TokenRepository: save(refreshToken)
+            
+            AuthService->>LoginAttemptService: loginSucceeded(email)
+            AuthService->>MetricsService: incrementLoginSuccess()
+            AuthService->>MetricsService: recordLoginDuration()
+            
+            AuthService-->>AuthController: TokenResponse
+            AuthController-->>Client: 200 OK {accessToken, refreshToken}
+        end
+    end
