@@ -1,9 +1,30 @@
 version: '3.8'
 
 services:
+  # PostgreSQL - Persistent application database
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-securitydb}
+      POSTGRES_USER: ${POSTGRES_USER:-securityuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-securitypass}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - observability
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
   # Elasticsearch - Log Storage
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    image: elasticsearch:8.11.0   # antes: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
     container_name: elasticsearch
     environment:
       - discovery.type=single-node
@@ -24,7 +45,7 @@ services:
 
   # Logstash - Log Processing
   logstash:
-    image: docker.elastic.co/logstash/logstash:8.11.0
+    image: logstash:8.11.0        # antes: docker.elastic.co/logstash/logstash:8.11.0
     container_name: logstash
     volumes:
       - ./logstash/pipeline:/usr/share/logstash/pipeline
@@ -42,7 +63,7 @@ services:
 
   # Kibana - Log Visualization
   kibana:
-    image: docker.elastic.co/kibana/kibana:8.11.0
+    image: kibana:8.11.0          # antes: docker.elastic.co/kibana/kibana:8.11.0
     container_name: kibana
     ports:
       - "5601:5601"
@@ -130,6 +151,8 @@ services:
 
 
 volumes:
+  postgres-data:
+    driver: local
   elasticsearch-data:
     driver: local
   prometheus-data:
